@@ -16,12 +16,16 @@ interface PostType {
 const PostCard = ({ postName, description, singlePost }: PostType) => {
   return (
     <div
-      className={`flex w-full   flex-1 bg-slate-100 border border-gray-400 ${
-        singlePost ? "rounded-lg rounded-b-none border-none" : "rounded-lg"
+      className={`flex w-full   flex-1  border border-gray-400 ${
+        singlePost
+          ? "rounded-lg rounded-b-none border-none bg-white"
+          : "rounded-lg bg-slate-100"
       }`}
     >
       <div
-        className={`bg-gray-500 rounded-l-md ${singlePost && "rounded-b-none"}`}
+        className={` rounded-l-md ${
+          singlePost ? "rounded-b-none" : "bg-gray-500"
+        }`}
       >
         <div className="max-w-[40px] flex flex-col items-center py-3 px-2 text-xs">
           <button>Up</button>

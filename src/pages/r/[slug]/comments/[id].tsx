@@ -22,7 +22,7 @@ dayjs.extend(relativeTime);
 const CommentSect = () => {
   return (
     <div>
-      <div className="py-2 px-6 ">
+      <div className="py-2 ">
         <form className="border-gray-100 border rounded-md">
           <textarea
             className="w-full py-2 px-4"
@@ -54,12 +54,15 @@ interface CommentPropsType {
 
 const Comment = (props: CommentPropsType) => {
   return (
-    <div>
-      <div>
-        <p>img</p>{" "}
-        <span>
-          {props.userName} · {dayjs(props.createdDate * 1000).fromNow()}
+    <div className="">
+      <div className="flex space-x-1 mb-1">
+        <span className="font-semibold">{props.userName} </span>
+        <span className="text-gray-500">
+          · {dayjs(props.createdDate * 1000).fromNow()}
         </span>
+      </div>
+      <div className="py-2 bg-blue-100 mb-5 p-2 rounded">
+        <p>{props.text}</p>
       </div>
       <hr />
     </div>
@@ -119,14 +122,16 @@ export default function Home() {
                 <PostCard key={post.id} {...post} singlePost={true} />
               ))}
             </div>
-            <CommentSect />
-            <div>
-              <input type="text" placeholder="Search By User" />
+            <div className="px-10 pt-5">
+              <CommentSect />
+              <div>
+                <input type="text" placeholder="Search By User" />
+              </div>
+              <hr />
+              {comments?.map((comment) => (
+                <Comment {...comment} key={comment.id} />
+              ))}
             </div>
-            <hr />
-            {comments?.map((comment) => (
-              <Comment {...comment} key={comment.id} />
-            ))}
           </div>
 
           <div className=" space-y-4">
