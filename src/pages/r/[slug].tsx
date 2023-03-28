@@ -7,18 +7,16 @@ import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
-import { fetchSubredditByName } from "../api/subredditApi";
+import {
+  fetchSubredditByName,
+  fetchSubredditPosts,
+  Subreddit,
+} from "../../api/subredditApi";
 import InfoCard from "@/components/InfoCard";
-import PostCard from "@/components/PostCard";
+import PostCard, { PostType } from "@/components/PostCard";
+import { LoadingPage } from "@/components/LoadingSpinner";
 
-interface Dato {
-  id: number;
-  name: string;
-  description: string;
-  numberOfPosts: number;
-}
-
-const BannerInfo = ({ name, description }: Dato) => {
+const BannerInfo = ({ name }: Subreddit) => {
   return (
     <div>
       <div>
@@ -44,95 +42,54 @@ const BannerInfo = ({ name, description }: Dato) => {
 };
 
 export default function SubredditHome() {
-  const dato = {
-    id: 1,
-    name: "league",
-    description: "league desc",
-    numberOfPosts: 0,
-  };
-
-  const posts = [
-    {
-      id: 4,
-      postName: "first post pog u",
-      url: "fdgdfg",
-      description: "fdgdf",
-      userName: "test3",
-      subredditName: "league",
-      voteCount: null,
-      commentCount: 0,
-      duration: "6 days ago",
-      upVote: false,
-      downVote: false,
-    },
-    {
-      id: 5,
-      postName: "first post pog u",
-      url: "fdgdfg",
-      description: "fdgdf",
-      userName: "test3",
-      subredditName: "league",
-      voteCount: null,
-      commentCount: 0,
-      duration: "6 days ago",
-      upVote: false,
-      downVote: false,
-    },
-    {
-      id: 6,
-      postName: "first post pog u",
-      url: "fdgdfg",
-      description: "fdgdf",
-      userName: "test3",
-      subredditName: "league",
-      voteCount: null,
-      commentCount: 0,
-      duration: "6 days ago",
-      upVote: false,
-      downVote: false,
-    },
-    {
-      id: 7,
-      postName: "first post pog u",
-      url: "fdgdfg",
-      description: "fdgdf",
-      userName: "test3",
-      subredditName: "league",
-      voteCount: null,
-      commentCount: 0,
-      duration: "5 days ago",
-      upVote: false,
-      downVote: false,
-    },
-  ];
   const cookies = new Cookies();
   const router = useRouter();
   const { slug } = router.query;
-  //   const { data, isLoading, error } = useQuery("subredditInfo", () => {
-  //     if (slug && typeof slug === "string") {
-  //       fetchSubredditByName(slug, cookies.get("jwt"));
-  //     }
-  //   });
+
+  const {
+    data: subredditData,
+    isLoading,
+    error,
+  } = useQuery("subredditInfo", () => {
+    if (slug && typeof slug === "string") {
+      return fetchSubredditByName(slug, cookies.get("jwt"));
+    }
+  });
+
+  const {
+    data: postsData,
+    isLoading: postsLoading,
+    error: postsError,
+  } = useQuery("subredditPosts", () => {
+    if (subredditData) {
+      return fetchSubredditPosts(subredditData.id, "3425");
+    }
+  });
+
   if (!slug) {
     return <div>Loading...</div>;
   }
 
-  //   if (error) {
-  //     return <div>error</div>;
-  //   }
+  if (isLoading || !subredditData || !slug || postsLoading) {
+    return <LoadingPage />;
+  }
+
+  if (error || postsError) {
+    return <div>error</div>;
+  }
 
   return (
     <main className="max-w-[1280px] mx-auto">
-      <BannerInfo {...dato} />
+      <BannerInfo {...subredditData} />
       <div className="flex justify-center space-x-6">
         <div className="flex flex-col w-[600px] space-y-2">
-          {posts.map((post) => (
-            <PostCard key={post.id} {...post} />
+          {postsData?.map((post) => (
+            <PostCard key={post.id} singlePost={false} {...post} />
           ))}
         </div>
         <div className=" space-y-4">
-          <InfoCard />
-          <InfoCard />
+          <InfoCard {...subredditData} />
+          <InfoCard {...subredditData} />
         </div>
       </div>
     </main>

@@ -6,7 +6,7 @@ import styles from "@/styles/Home.module.css";
 const inter = Inter({ subsets: ["latin"] });
 
 import { useForm } from "react-hook-form";
-import { loginApi, loginData } from "./api/authApi";
+import { loginApi, loginData } from "../api/authApi";
 import jwt from "jwt-decode";
 import Cookies from "universal-cookie";
 import { UserContext } from "@/context/UserContext";

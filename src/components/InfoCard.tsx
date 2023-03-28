@@ -1,11 +1,13 @@
-const InfoCard = () => {
+import { Subreddit } from "@/api/subredditApi";
+
+const InfoCard = ({ description }: Subreddit) => {
   return (
     <div className="border-1-white rounded max-w-[320px] border-white border bg-white">
       <div className="py-2 px-4 bg-yellow-700 text-white rounded-sm">
         <p>About Community</p>
       </div>
       <div className="py-2 px-4 space-y-3">
-        <p>This is a subreddit devoted to the game League of Legends.</p>
+        <p>{description}</p>
         <div className="flex space-x-2">
           <img src="" alt="cake" /> <p>Created DATEOFCREATION</p>
         </div>

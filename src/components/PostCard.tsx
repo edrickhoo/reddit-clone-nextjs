@@ -1,11 +1,11 @@
-interface PostType {
+export interface PostType {
   id: number;
   postName: string;
   url: string;
   description: string;
   userName: string;
   subredditName: string;
-  voteCount: null;
+  voteCount: number;
   commentCount: number;
   duration: string;
   upVote: boolean;
