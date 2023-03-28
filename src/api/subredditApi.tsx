@@ -49,3 +49,39 @@ export const fetchSubredditPosts = async (subredditId: number, jwt: string) => {
   console.log(res.data);
   return res.data;
 };
+
+export const fetchSinglePost = async (postId: string, jwt: string) => {
+  const res = await axios.get<Post>(
+    BASE_URL + `posts/${postId}`
+    // {
+    //   headers: {
+    //     Authorization: `Bearer ${jwt}`,
+    //   },
+    //   withCredentials: true,
+    // }
+  );
+  console.log(res.data);
+  return [res.data];
+};
+
+interface Comment {
+  id: number;
+  postId: number;
+  createdDate: number;
+  text: string;
+  userName: string;
+}
+
+export const fetchCommentsByPost = async (postId: string, jwt: string) => {
+  const res = await axios.get<Comment[]>(
+    BASE_URL + `comments?postId=${postId}`
+    // {
+    //   headers: {
+    //     Authorization: `Bearer ${jwt}`,
+    //   },
+    //   withCredentials: true,
+    // }
+  );
+  console.log(res.data);
+  return res.data;
+};

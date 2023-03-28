@@ -16,6 +16,8 @@ import InfoCard from "@/components/InfoCard";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingPage } from "@/components/LoadingSpinner";
+import { useQuery } from "react-query";
+import { fetchCommentsByPost, fetchSinglePost } from "@/api/subredditApi";
 
 dayjs.extend(relativeTime);
 
@@ -69,48 +71,37 @@ const Comment = (props: CommentPropsType) => {
   );
 };
 
-export default function Home() {
+export default function SinglePost() {
   const router = useRouter();
   const { slug, id } = router.query;
-  const posts = [
-    {
-      id: 7,
-      postName: "first post pog u",
-      url: "fdgdfg",
-      description: "fdgdf",
-      userName: "test3",
-      subredditName: "league",
-      voteCount: null,
-      commentCount: 0,
-      duration: "5 days ago",
-      upVote: false,
-      downVote: false,
-    },
-  ];
 
-  const comments = [
-    {
-      id: 1,
-      postId: 1,
-      createdDate: 1679397736.795451,
-      text: "This is a comment",
-      userName: "test3",
-    },
-    {
-      id: 2,
-      postId: 1,
-      createdDate: 1679397736.795451,
-      text: "This is another comment",
-      userName: "test3",
-    },
-    {
-      id: 5,
-      postId: 2,
-      createdDate: 1679920319.865503,
-      text: "test",
-      userName: "test3",
-    },
-  ];
+  const {
+    data: posts,
+    isLoading,
+    error,
+  } = useQuery("subredditInfo", () => {
+    if (id && typeof id === "string") {
+      return fetchSinglePost(id, "123");
+    }
+  });
+
+  const {
+    data: comments,
+    isLoading: commentsLoading,
+    error: commentsError,
+  } = useQuery("subredditInfo", () => {
+    if (id && typeof id === "string") {
+      return fetchCommentsByPost(id, "123");
+    }
+  });
+
+  if (isLoading || commentsLoading || !comments || !posts) {
+    return <LoadingPage />;
+  }
+
+  if (error) {
+    return <div>error</div>;
+  }
 
   return (
     <>
@@ -118,7 +109,7 @@ export default function Home() {
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">
             <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2">
-              {posts.map((post) => (
+              {posts?.map((post) => (
                 <PostCard key={post.id} {...post} singlePost={true} />
               ))}
             </div>
@@ -135,8 +126,8 @@ export default function Home() {
           </div>
 
           <div className=" space-y-4">
-            <InfoCard />
-            <InfoCard />
+            {/* <InfoCard />
+            <InfoCard /> */}
           </div>
         </div>
       </main>

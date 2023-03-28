@@ -70,7 +70,7 @@ export default function SubredditHome() {
     return <div>Loading...</div>;
   }
 
-  if (isLoading || !subredditData || !slug || postsLoading) {
+  if (isLoading || !subredditData || postsLoading) {
     return <LoadingPage />;
   }
 

@@ -13,7 +13,13 @@ export interface PostType {
   singlePost: boolean;
 }
 
-const PostCard = ({ postName, description, singlePost }: PostType) => {
+const PostCard = ({
+  postName,
+  description,
+  singlePost,
+  userName,
+  duration,
+}: PostType) => {
   return (
     <div
       className={`flex w-full   flex-1  border border-gray-400 ${
@@ -35,7 +41,7 @@ const PostCard = ({ postName, description, singlePost }: PostType) => {
       </div>
       <div className="pt-3 px-2 flex flex-col justify-between">
         <div>
-          <p>Posted By User TimeStamp</p>
+          <p>{userName} By User TimeStamp</p>
           <h5 className="font-semibold text-lg">{postName}</h5>
           <p>{description}</p>
         </div>
