@@ -17,6 +17,8 @@ import {
   postCommentToPost,
 } from "@/api/subredditApi";
 import { checkJwtValidation, parseJwt } from "@/api/authApi";
+import Jwt from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 dayjs.extend(relativeTime);
 
@@ -134,8 +136,7 @@ export default function SinglePost() {
   const onCommentSubmit = (data: CommentDto) => {
     checkJwtValidation();
     data.postId = Number(id);
-    data.userName =
-      cookies.get("jwt") ?? (parseJwt(cookies.get("jwt")).sub || null);
+    data.userName = parseJwt(cookies.get("jwt")).sub;
     const dto = {
       commentDto: data,
       jwt: cookies.get("jwt"),
