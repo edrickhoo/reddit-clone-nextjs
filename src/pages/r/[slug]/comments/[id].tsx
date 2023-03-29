@@ -1,15 +1,6 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-
-const inter = Inter({ subsets: ["latin"] });
-
 import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
-import jwt from "jwt-decode";
-import Cookies from "universal-cookie";
 import { UserContext } from "@/context/UserContext";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useRouter } from "next/router";
 import PostCard from "@/components/PostCard";
 import InfoCard from "@/components/InfoCard";
