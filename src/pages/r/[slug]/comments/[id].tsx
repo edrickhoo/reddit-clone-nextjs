@@ -5,7 +5,7 @@ import styles from "@/styles/Home.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-import { useForm } from "react-hook-form";
+import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import jwt from "jwt-decode";
 import Cookies from "universal-cookie";
 import { UserContext } from "@/context/UserContext";
@@ -16,21 +16,39 @@ import InfoCard from "@/components/InfoCard";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingPage } from "@/components/LoadingSpinner";
-import { useQuery } from "react-query";
-import { fetchCommentsByPost, fetchSinglePost } from "@/api/subredditApi";
+import { useMutation, useQuery } from "react-query";
+import {
+  CommentDto,
+  cookies,
+  fetchCommentsByPost,
+  fetchSinglePost,
+  fetchSubredditByName,
+  postCommentToPost,
+} from "@/api/subredditApi";
+import { checkJwtValidation, parseJwt } from "@/api/authApi";
 
 dayjs.extend(relativeTime);
 
-const CommentSect = () => {
+const CommentSect = ({
+  register,
+  onCommentSubmit,
+  handleSubmit,
+}: {
+  register: UseFormRegister<CommentDto>;
+  onCommentSubmit: (data: CommentDto) => void;
+  handleSubmit: UseFormHandleSubmit<CommentDto>;
+}) => {
   return (
     <div>
       <div className="py-2 ">
-        <form className="border-gray-100 border rounded-md">
+        <form
+          onSubmit={handleSubmit(onCommentSubmit)}
+          className="border-gray-100 border rounded-md"
+        >
           <textarea
+            {...register("text")}
             className="w-full py-2 px-4"
             placeholder="What are your thoughts?"
-            name=""
-            id=""
             cols={15}
             rows={10}
           ></textarea>
@@ -72,30 +90,77 @@ const Comment = (props: CommentPropsType) => {
 };
 
 export default function SinglePost() {
+  const [user, setUser] = useContext(UserContext);
+
   const router = useRouter();
   const { slug, id } = router.query;
-
   const {
     data: posts,
     isLoading,
     error,
-  } = useQuery("subredditInfo", () => {
+  } = useQuery("postInfo", () => {
     if (id && typeof id === "string") {
-      return fetchSinglePost(id, "123");
+      return fetchSinglePost(id);
     }
   });
-
   const {
     data: comments,
     isLoading: commentsLoading,
     error: commentsError,
-  } = useQuery("subredditInfo", () => {
+  } = useQuery("postComments", () => {
     if (id && typeof id === "string") {
-      return fetchCommentsByPost(id, "123");
+      return fetchCommentsByPost(id);
     }
   });
 
-  if (isLoading || commentsLoading || !comments || !posts) {
+  const {
+    data: subredditData,
+    isLoading: subredditLoading,
+    error: subredditError,
+  } = useQuery("subredditInfo", () => {
+    if (slug && typeof slug === "string") {
+      return fetchSubredditByName(slug);
+    }
+  });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<CommentDto>();
+
+  const { mutate, isLoading: mutateLoading } = useMutation(postCommentToPost, {
+    onSuccess: (data) => {
+      const message = "success";
+      alert(message);
+    },
+    onError: () => {
+      alert("there was an error");
+    },
+  });
+
+  const onCommentSubmit = (data: CommentDto) => {
+    checkJwtValidation();
+    data.postId = Number(id);
+    data.userName =
+      cookies.get("jwt") ?? (parseJwt(cookies.get("jwt")).sub || null);
+    const dto = {
+      commentDto: data,
+      jwt: cookies.get("jwt"),
+      postId: Number(data.postId),
+    };
+    mutate(dto);
+  };
+
+  if (
+    isLoading ||
+    commentsLoading ||
+    !comments ||
+    !posts ||
+    subredditLoading ||
+    !subredditData
+  ) {
     return <LoadingPage />;
   }
 
@@ -105,7 +170,7 @@ export default function SinglePost() {
 
   return (
     <>
-      <main className="max-w-[1280px] mx-auto">
+      <main className="max-w-[1280px] mx-auto py-16">
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">
             <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2">
@@ -114,7 +179,11 @@ export default function SinglePost() {
               ))}
             </div>
             <div className="px-10 pt-5">
-              <CommentSect />
+              <CommentSect
+                onCommentSubmit={onCommentSubmit}
+                handleSubmit={handleSubmit}
+                register={register}
+              />
               <div>
                 <input type="text" placeholder="Search By User" />
               </div>
@@ -126,8 +195,8 @@ export default function SinglePost() {
           </div>
 
           <div className=" space-y-4">
-            {/* <InfoCard />
-            <InfoCard /> */}
+            <InfoCard {...subredditData} />
+            <InfoCard {...subredditData} />
           </div>
         </div>
       </main>
