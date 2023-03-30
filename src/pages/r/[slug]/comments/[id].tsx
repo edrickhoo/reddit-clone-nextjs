@@ -1,12 +1,12 @@
 import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import PostCard from "@/components/PostCard";
 import InfoCard from "@/components/InfoCard";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { LoadingPage } from "@/components/LoadingSpinner";
+import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import { useMutation, useQuery } from "react-query";
 import {
   CommentDto,
@@ -19,6 +19,7 @@ import {
 import { checkJwtValidation, parseJwt } from "@/api/authApi";
 import Jwt from "jwt-decode";
 import jwtDecode from "jwt-decode";
+import { GetStaticProps } from "next";
 
 dayjs.extend(relativeTime);
 
@@ -26,11 +27,13 @@ interface CommentSectProps {
   register: UseFormRegister<CommentDto>;
   onCommentSubmit: (data: CommentDto) => void;
   handleSubmit: UseFormHandleSubmit<CommentDto>;
+  commentMutateLoading: boolean;
 }
 const CommentSect = ({
   register,
   onCommentSubmit,
   handleSubmit,
+  commentMutateLoading,
 }: CommentSectProps) => {
   return (
     <div>
@@ -47,8 +50,11 @@ const CommentSect = ({
             rows={10}
           ></textarea>
           <div className="flex justify-end bg-slate-200 py-1 rounded-b">
-            <button className="mr-3 py-1 px-3 rounded-full text-sm text-white bg-gray-500">
-              Comment
+            <button
+              disabled={commentMutateLoading}
+              className="mr-3 py-1 px-3 rounded-full text-sm text-white bg-gray-500"
+            >
+              {commentMutateLoading ? <LoadingSpinner size={12} /> : "Comment"}
             </button>
           </div>
         </form>
@@ -83,50 +89,43 @@ const Comment = (props: CommentPropsType) => {
   );
 };
 
-export default function SinglePost() {
+export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   const [user, setUser] = useContext(UserContext);
 
-  const router = useRouter();
-  const { slug, id } = router.query;
   const {
     data: posts,
     isLoading,
     error,
-  } = useQuery("postInfo", () => {
-    if (id && typeof id === "string") {
-      return fetchSinglePost(id);
-    }
-  });
+  } = useQuery("postInfo", () => fetchSinglePost(id));
   const {
     data: comments,
     isLoading: commentsLoading,
     error: commentsError,
-  } = useQuery("postComments", () => {
-    if (id && typeof id === "string") {
-      return fetchCommentsByPost(id);
-    }
+  } = useQuery("postComments", () => fetchCommentsByPost(id), {
+    cacheTime: 0,
   });
 
   const {
     data: subredditData,
     isLoading: subredditLoading,
     error: subredditError,
-  } = useQuery("subredditInfo", () => {
-    if (slug && typeof slug === "string") {
-      return fetchSubredditByName(slug);
-    }
+  } = useQuery("subredditInfo", () => fetchSubredditByName(slug), {
+    cacheTime: 0,
   });
 
-  const { mutate, isLoading: mutateLoading } = useMutation(postCommentToPost, {
-    onSuccess: (data) => {
-      reset();
-      const message = "success";
-      alert(message);
-    },
-    onError: () => {
-      alert("there was an error");
-    },
-  });
+  const { mutate, isLoading: commentMutateLoading } = useMutation(
+    postCommentToPost,
+    {
+      onSuccess: (data) => {
+        reset();
+        const message = "success";
+        alert(message);
+      },
+      onError: () => {
+        alert("there was an error");
+      },
+    }
+  );
 
   const {
     register,
@@ -175,6 +174,7 @@ export default function SinglePost() {
             </div>
             <div className="px-10 pt-5">
               <CommentSect
+                commentMutateLoading={commentMutateLoading}
                 onCommentSubmit={onCommentSubmit}
                 handleSubmit={handleSubmit}
                 register={register}
@@ -198,3 +198,22 @@ export default function SinglePost() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const slug = context.params?.slug;
+  const id = context.params?.id;
+
+  if (typeof slug !== "string" || typeof id !== "string")
+    throw new Error("no slug");
+
+  return {
+    props: {
+      slug,
+      id,
+    },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};

@@ -1,4 +1,5 @@
 import { Subreddit } from "@/api/subredditApi";
+import Image from "next/image";
 import Link from "next/link";
 
 const InfoCard = ({ description, name }: Subreddit) => {
@@ -10,7 +11,7 @@ const InfoCard = ({ description, name }: Subreddit) => {
       <div className="py-2 px-4 space-y-3">
         <p>{description}</p>
         <div className="flex space-x-2">
-          <img src="" alt="cake" /> <p>Created DATEOFCREATION</p>
+          <Image src="" alt="cake" /> <p>Created DATEOFCREATION</p>
         </div>
       </div>
       <hr />

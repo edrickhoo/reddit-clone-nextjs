@@ -13,7 +13,7 @@ import {
 import InfoCard from "@/components/InfoCard";
 import router, { useRouter } from "next/router";
 import { useMutation, useQuery } from "react-query";
-import { LoadingPage } from "@/components/LoadingSpinner";
+import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import { checkJwtValidation } from "@/api/authApi";
 import jwtDecode from "jwt-decode";
 
@@ -21,12 +21,14 @@ interface CreatePostProps {
   register: UseFormRegister<PostDto>;
   handleSubmit: UseFormHandleSubmit<PostDto>;
   onPostSubmit: (data: PostDto) => Promise<void>;
+  postMutateLoading: boolean;
 }
 
 export const CreatePost = ({
   register,
   handleSubmit,
   onPostSubmit,
+  postMutateLoading,
 }: CreatePostProps) => {
   return (
     <div className="max-w-[600px] flex-1 py-4 space-y-3 ">
@@ -36,10 +38,10 @@ export const CreatePost = ({
       <div className="w-full bg-white rounded">
         <div className="flex ">
           <button className="flex space-x-2 px-6 py-4 border rounded-tl border-b border-r">
-            <img src="" alt="Post" /> <span>Post</span>
+            <Image src="" alt="Post" /> <span>Post</span>
           </button>
           <button className="flex space-x-2 px-6 py-4 border border-l-0">
-            <img src="" alt="Image" /> <span>Image</span>
+            <Image src="" alt="Image" /> <span>Image</span>
           </button>
         </div>
         <form
@@ -62,7 +64,12 @@ export const CreatePost = ({
           </div>
           <hr />
           <div className="flex justify-end">
-            <button className="py-1 px-5 rounded-2xl bg-gray-500">Post</button>
+            <button
+              disabled={postMutateLoading}
+              className="py-1 px-5 rounded-2xl bg-gray-500"
+            >
+              {postMutateLoading ? <LoadingSpinner size={12} /> : "Post"}
+            </button>
           </div>
         </form>
       </div>
@@ -85,16 +92,19 @@ export default function CreatePostPage() {
     }
   });
 
-  const { mutate, isLoading: mutateLoading } = useMutation(postSubredditPost, {
-    onSuccess: (data) => {
-      reset();
-      alert("success");
-      router.push(`/r/${slug}`);
-    },
-    onError: () => {
-      alert("there was an error");
-    },
-  });
+  const { mutate, isLoading: postMutateLoading } = useMutation(
+    postSubredditPost,
+    {
+      onSuccess: (data) => {
+        reset();
+        alert("success");
+        router.push(`/r/${slug}`);
+      },
+      onError: () => {
+        alert("there was an error");
+      },
+    }
+  );
 
   const {
     register,
@@ -134,6 +144,7 @@ export default function CreatePostPage() {
       </Head>
       <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10">
         <CreatePost
+          postMutateLoading={postMutateLoading}
           register={register}
           handleSubmit={handleSubmit}
           onPostSubmit={onPostSubmit}

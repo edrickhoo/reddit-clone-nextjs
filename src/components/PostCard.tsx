@@ -1,5 +1,6 @@
 import { VoteDto, votePost } from "@/api/subredditApi";
 import { AxiosResponse } from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
 import { UseMutateFunction, useMutation } from "react-query";
@@ -28,6 +29,7 @@ const PostCard = ({
   duration,
   id,
   voteCount,
+  commentCount,
 }: PostParamsType) => {
   const { slug } = router.query;
 
@@ -58,7 +60,7 @@ const PostCard = ({
               typeof slug === "string" && !undefined && slug
             )}/comments/${id}`
       }
-      className={`flex w-full   flex-1  border border-gray-400 ${
+      className={`flex w-full  border border-gray-400 ${
         singlePost
           ? "rounded-lg rounded-b-none border-none bg-white cursor-default"
           : "rounded-lg bg-slate-100"
@@ -102,8 +104,8 @@ const PostCard = ({
         </div>
         <div>
           <button className="flex hover:bg-gray-300 p-1 text-sm">
-            <img src="" alt="Comment" />
-            <span> Comments</span>
+            <Image src="" alt="Comment" />
+            <span>{commentCount} Comments</span>
           </button>
         </div>
       </div>

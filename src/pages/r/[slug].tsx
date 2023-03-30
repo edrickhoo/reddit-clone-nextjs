@@ -8,16 +8,19 @@ import {
 import InfoCard from "@/components/InfoCard";
 import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
+import { useEffect, useState } from "react";
+import { GetStaticProps } from "next";
+import Image from "next/image";
 
 const BannerInfo = ({ name }: Subreddit) => {
   return (
     <div>
       <div>
-        <img src="" alt="Subreddit Banner" />
+        <Image src="" alt="Subreddit Banner" />
       </div>
       <div>
         <div className="flex space-x-4">
-          <img src="" alt="Subreddit Icon" />
+          <Image src="" alt="Subreddit Icon" />
           <div>
             <div className="flex space-x-4">
               <h2>{name}</h2> <button>Subscribe</button>
@@ -34,36 +37,32 @@ const BannerInfo = ({ name }: Subreddit) => {
   );
 };
 
-export default function SubredditHome() {
+export default function SubredditHome({ slug }: { slug: string }) {
   // const cookies = new Cookies();
-  const router = useRouter();
-  const { slug } = router.query;
+  console.log(slug, "brainslug");
+  const [refresh, setRefresh] = useState(1);
 
   const {
     data: subredditData,
     isLoading,
     error,
-  } = useQuery("subredditInfo", () => {
-    if (slug && typeof slug === "string") {
-      return fetchSubredditByName(slug);
-    }
+  } = useQuery("subredditInfo", () => fetchSubredditByName(slug), {
+    cacheTime: 0,
   });
 
   const {
     data: postsData,
     isLoading: postsLoading,
     error: postsError,
-  } = useQuery("subredditPosts", () => {
-    if (subredditData) {
-      return fetchSubredditPosts(subredditData.id);
-    }
+  } = useQuery("subredditPosts", () => fetchSubredditPosts(slug), {
+    cacheTime: 0,
   });
 
   if (!slug) {
     return <div>Loading...</div>;
   }
 
-  if (isLoading || !subredditData || postsLoading) {
+  if (isLoading || postsLoading || !subredditData || !postsData) {
     return <LoadingPage />;
   }
 
@@ -88,3 +87,19 @@ export default function SubredditHome() {
     </main>
   );
 }
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const slug = context.params?.slug;
+
+  if (typeof slug !== "string") throw new Error("no slug");
+
+  return {
+    props: {
+      slug,
+    },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};

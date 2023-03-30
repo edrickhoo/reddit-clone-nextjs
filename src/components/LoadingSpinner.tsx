@@ -1,3 +1,6 @@
+import Image from "next/image";
+import pikachu from "../assets/pikachu-running.gif";
+
 const LoadingSpinner = ({ size }: { size: number }) => {
   return (
     <div role="status">
@@ -29,7 +32,12 @@ export default LoadingSpinner;
 export const LoadingPage = () => {
   return (
     <div className="absolute top-0 left-0 h-[100vh] w-full flex justify-center items-center">
-      <LoadingSpinner size={64} />
+      {/* <LoadingSpinner size={64} /> */}
+      <Image
+        className="w-[300px] h-[300px]"
+        src={pikachu}
+        alt="pikachu running"
+      />
     </div>
   );
 };

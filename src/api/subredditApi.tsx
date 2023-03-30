@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "universal-cookie/cjs/Cookies";
-import { BASE_URL } from "./authApi";
+import { BASE_URL, checkJwtValidation } from "./authApi";
 
 export interface Subreddit {
   description: string;
@@ -33,9 +33,16 @@ export const fetchSubredditByName = async (name: string) => {
   return res.data;
 };
 
-export const fetchSubredditPosts = async (subredditId: number) => {
+export const fetchSubreddits = async () => {
+  const res = await axios.get<Subreddit[]>(BASE_URL + `subreddit`);
+  console.log(res.data);
+  return res.data;
+};
+
+export const fetchSubredditPosts = async (subredditName: string) => {
+  console.log(subredditName, "subredditNameididid");
   const res = await axios.get<Post[]>(
-    BASE_URL + `posts?subredditId${subredditId}`
+    BASE_URL + `posts?subredditName=${subredditName}`
   );
   console.log(res.data);
   return res.data.reverse();
@@ -122,6 +129,7 @@ export interface VoteDto {
 }
 
 export const votePost = async (voteDto: VoteDto) => {
+  await checkJwtValidation();
   const jwt = cookies.get("jwt");
   console.log(voteDto, jwt, "pizza");
   const res = await axios.post(BASE_URL + "votes", voteDto, {
