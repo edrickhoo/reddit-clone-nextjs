@@ -7,7 +7,7 @@ type User = {
 type UserContext = [User, React.Dispatch<React.SetStateAction<User>>];
 
 export const UserContext = createContext<UserContext>([
-  { user: "" },
+  { user: "dg" },
   () => null,
 ]);
 
@@ -21,4 +21,4 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default UserContext;
+export default UserProvider;

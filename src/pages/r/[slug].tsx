@@ -1,10 +1,3 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-
-import Cookies from "universal-cookie";
-import { UserContext } from "@/context/UserContext";
-import { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import {
@@ -13,7 +6,7 @@ import {
   Subreddit,
 } from "../../api/subredditApi";
 import InfoCard from "@/components/InfoCard";
-import PostCard, { PostType } from "@/components/PostCard";
+import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
 
 const BannerInfo = ({ name }: Subreddit) => {
@@ -42,7 +35,7 @@ const BannerInfo = ({ name }: Subreddit) => {
 };
 
 export default function SubredditHome() {
-  const cookies = new Cookies();
+  // const cookies = new Cookies();
   const router = useRouter();
   const { slug } = router.query;
 
@@ -52,7 +45,7 @@ export default function SubredditHome() {
     error,
   } = useQuery("subredditInfo", () => {
     if (slug && typeof slug === "string") {
-      return fetchSubredditByName(slug, cookies.get("jwt"));
+      return fetchSubredditByName(slug);
     }
   });
 
@@ -62,7 +55,7 @@ export default function SubredditHome() {
     error: postsError,
   } = useQuery("subredditPosts", () => {
     if (subredditData) {
-      return fetchSubredditPosts(subredditData.id, "3425");
+      return fetchSubredditPosts(subredditData.id);
     }
   });
 

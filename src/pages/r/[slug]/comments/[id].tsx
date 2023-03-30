@@ -120,11 +120,13 @@ export default function SinglePost() {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CommentDto>();
 
   const { mutate, isLoading: mutateLoading } = useMutation(postCommentToPost, {
     onSuccess: (data) => {
+      reset();
       const message = "success";
       alert(message);
     },
@@ -133,8 +135,8 @@ export default function SinglePost() {
     },
   });
 
-  const onCommentSubmit = (data: CommentDto) => {
-    checkJwtValidation();
+  const onCommentSubmit = async (data: CommentDto) => {
+    await checkJwtValidation();
     data.postId = Number(id);
     data.userName = parseJwt(cookies.get("jwt")).sub;
     const dto = {

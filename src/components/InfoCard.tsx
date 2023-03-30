@@ -1,6 +1,7 @@
 import { Subreddit } from "@/api/subredditApi";
+import Link from "next/link";
 
-const InfoCard = ({ description }: Subreddit) => {
+const InfoCard = ({ description, name }: Subreddit) => {
   return (
     <div className="border-1-white rounded max-w-[320px] border-white border bg-white">
       <div className="py-2 px-4 bg-yellow-700 text-white rounded-sm">
@@ -19,9 +20,12 @@ const InfoCard = ({ description }: Subreddit) => {
       </div>
       <hr />
       <div className="py-2 px-4 flex flex-col items-center">
-        <button className="bg-yellow-600 text-white w-full rounded-2xl py-1">
+        <Link
+          href={`/r/${name}/submit`}
+          className="bg-yellow-600 text-white w-full rounded-2xl py-1 text-center"
+        >
           Create Post
-        </button>
+        </Link>
       </div>
     </div>
   );

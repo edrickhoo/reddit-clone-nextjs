@@ -1,23 +1,17 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-
-const inter = Inter({ subsets: ["latin"] });
-
 import { useForm } from "react-hook-form";
 import { loginApi, loginData } from "../api/authApi";
-import jwt from "jwt-decode";
-import Cookies from "universal-cookie";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
+import { cookies } from "@/api/subredditApi";
+
 export default function Home() {
   const Login = () => {
     const [user, setUser] = useContext(UserContext);
     const {
       register,
       handleSubmit,
-      watch,
       formState: { errors },
     } = useForm<loginData>();
 
@@ -25,13 +19,13 @@ export default function Home() {
       console.log(user);
     }, [user]);
 
-    const cookies = new Cookies();
-
     const onSubmit = async (data: loginData) => {
       try {
         const res = await loginApi(data);
+        console.log(res);
         cookies.set("jwt", res.authenticationToken);
         cookies.set("jwt-refresh", res.refreshToken);
+        cookies.set("jwt-expire", res.expiresAt);
         setUser({ ...user, user: res.username });
       } catch (e) {
         console.log(e);
