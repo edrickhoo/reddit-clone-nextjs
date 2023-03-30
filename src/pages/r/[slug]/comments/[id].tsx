@@ -22,15 +22,16 @@ import jwtDecode from "jwt-decode";
 
 dayjs.extend(relativeTime);
 
+interface CommentSectProps {
+  register: UseFormRegister<CommentDto>;
+  onCommentSubmit: (data: CommentDto) => void;
+  handleSubmit: UseFormHandleSubmit<CommentDto>;
+}
 const CommentSect = ({
   register,
   onCommentSubmit,
   handleSubmit,
-}: {
-  register: UseFormRegister<CommentDto>;
-  onCommentSubmit: (data: CommentDto) => void;
-  handleSubmit: UseFormHandleSubmit<CommentDto>;
-}) => {
+}: CommentSectProps) => {
   return (
     <div>
       <div className="py-2 ">
@@ -116,14 +117,6 @@ export default function SinglePost() {
     }
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<CommentDto>();
-
   const { mutate, isLoading: mutateLoading } = useMutation(postCommentToPost, {
     onSuccess: (data) => {
       reset();
@@ -134,6 +127,14 @@ export default function SinglePost() {
       alert("there was an error");
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CommentDto>();
 
   const onCommentSubmit = async (data: CommentDto) => {
     await checkJwtValidation();

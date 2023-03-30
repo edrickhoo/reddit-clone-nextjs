@@ -1,7 +1,11 @@
+import { VoteDto, votePost } from "@/api/subredditApi";
+import { AxiosResponse } from "axios";
 import Link from "next/link";
 import router from "next/router";
+import { UseMutateFunction, useMutation } from "react-query";
+import LoadingSpinner from "./LoadingSpinner";
 
-export interface PostType {
+export interface PostParamsType {
   id: number;
   postName: string;
   url: string;
@@ -23,8 +27,28 @@ const PostCard = ({
   userName,
   duration,
   id,
-}: PostType) => {
+  voteCount,
+}: PostParamsType) => {
   const { slug } = router.query;
+
+  const { mutate, isLoading: mutateLoading } = useMutation(votePost, {
+    onSuccess: (data) => {
+      const message = "success";
+      alert(message);
+    },
+    onError: () => {
+      alert("there was an error");
+    },
+  });
+
+  const onVote = (voteType: string) => {
+    const data = {
+      postId: id,
+      voteType: voteType,
+    };
+    mutate(data);
+  };
+
   return (
     <Link
       href={
@@ -50,14 +74,22 @@ const PostCard = ({
             onClick={(e) => {
               e.stopPropagation();
               e.nativeEvent.preventDefault();
-              console.log("pizza");
+              onVote("UPVOTE");
             }}
-            className="z-20 hover:bg-white"
           >
             Up
           </button>
-          <div>1</div>
-          <button>Down</button>
+
+          <div>{mutateLoading ? <LoadingSpinner size={10} /> : voteCount}</div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.nativeEvent.preventDefault();
+              onVote("DOWNVOTE");
+            }}
+          >
+            Down
+          </button>
         </div>
       </div>
       <div className="pt-3 px-2 flex flex-col justify-between">

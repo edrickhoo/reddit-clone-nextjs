@@ -115,3 +115,21 @@ export const postSubredditPost = async ({ postDto, jwt }: PostParams) => {
   console.log(res, "postPost");
   return res;
 };
+
+export interface VoteDto {
+  postId: number;
+  voteType: string;
+}
+
+export const votePost = async (voteDto: VoteDto) => {
+  const jwt = cookies.get("jwt");
+  console.log(voteDto, jwt, "pizza");
+  const res = await axios.post(BASE_URL + "votes", voteDto, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
+  console.log(res, "votePost");
+  return res;
+};
