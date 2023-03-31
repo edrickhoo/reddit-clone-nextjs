@@ -31,7 +31,7 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
   const { mutate, isLoading: postMutateLoading } = useMutation(
     createSubreddit,
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         reset();
         alert("success");
         router.push(`/`);
@@ -150,18 +150,24 @@ export default function Home() {
         <hr className="mb-7" />
         <div className="flex justify-center space-x-6">
           <div className=" w-[600px] grid grid-cols-2 gap-2">
-            {subredditData?.map((sub) => {
-              return (
-                <Link
-                  className="rounded bg-slate-100 px-2 py-1 text-center border-2 border-slate-400 hover:border-orange-500"
-                  key={sub.id}
-                  href={`/r/${sub.name}`}
-                >
-                  <div>Visit {sub.name}</div>
-                  <div>{sub.description}</div>
-                </Link>
-              );
-            })}
+            {!subredditData || subredditData.length === 0 ? (
+              <div className="text-white text-lg pt-4">
+                There are currently no subreddits
+              </div>
+            ) : (
+              subredditData.map((sub) => {
+                return (
+                  <Link
+                    className="rounded bg-slate-100 px-2 py-1 text-center border-2 border-slate-400 hover:border-orange-500"
+                    key={sub.id}
+                    href={`/r/${sub.name}`}
+                  >
+                    <div>Visit {sub.name}</div>
+                    <div>{sub.description}</div>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </main>

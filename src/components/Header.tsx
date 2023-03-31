@@ -18,7 +18,7 @@ const Header = () => {
     cookies.remove("jwt");
     cookies.remove("jwt-refresh");
     cookies.remove("jwt-expire");
-    toast("Successfuly logged out", {
+    toast("Successfully logged out", {
       duration: 2000,
     });
   };
