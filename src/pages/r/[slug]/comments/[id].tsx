@@ -176,7 +176,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     <>
       <Header />
 
-      <main className="max-w-[1280px] mx-auto py-16 pt-24">
+      <main className="max-w-[1280px] mx-auto py-16 pt-16">
         <BannerInfo {...subredditData} singlePost={true} />
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">

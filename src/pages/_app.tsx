@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
+        <Toaster position="top-right" />
         <Component {...pageProps} />
       </QueryClientProvider>
     </UserProvider>

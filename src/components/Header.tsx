@@ -2,6 +2,7 @@ import { parseJwt } from "@/api/authApi";
 import { cookies } from "@/api/subredditApi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 const Header = () => {
   const [username, setUsername] = useState("");
@@ -17,6 +18,9 @@ const Header = () => {
     cookies.remove("jwt");
     cookies.remove("jwt-refresh");
     cookies.remove("jwt-expire");
+    toast("Successfuly logged out", {
+      duration: 2000,
+    });
   };
 
   return (
