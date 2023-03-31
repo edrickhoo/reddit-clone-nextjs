@@ -5,6 +5,8 @@ import { loginApi, loginData } from "../api/authApi";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import { cookies } from "@/api/subredditApi";
+import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 const Login = () => {
   const [user, setUser] = useContext(UserContext);
@@ -13,6 +15,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<loginData>();
+  const router = useRouter();
 
   useEffect(() => {
     console.log(user);
@@ -26,6 +29,7 @@ const Login = () => {
       cookies.set("jwt-refresh", res.refreshToken);
       cookies.set("jwt-expire", res.expiresAt);
       setUser({ ...user, user: res.username });
+      router.push("/");
     } catch (e) {
       console.log(e);
     }
@@ -79,6 +83,7 @@ export default function LoginPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header />
       <main>
         <Login />
       </main>

@@ -11,6 +11,7 @@ import { LoadingPage } from "@/components/LoadingSpinner";
 import { useEffect, useState } from "react";
 import { GetStaticProps } from "next";
 import Image from "next/image";
+import Header from "@/components/Header";
 
 const BannerInfo = ({ name }: Subreddit) => {
   return (
@@ -71,20 +72,27 @@ export default function SubredditHome({ slug }: { slug: string }) {
   }
 
   return (
-    <main className="max-w-[1280px] mx-auto">
-      <BannerInfo {...subredditData} />
-      <div className="flex justify-center space-x-6">
-        <div className="flex flex-col w-[600px] space-y-2">
-          {postsData?.map((post) => (
-            <PostCard key={post.id} singlePost={false} {...post} />
-          ))}
+    <>
+      <Header />
+      <main className="max-w-[1280px] mx-auto">
+        <BannerInfo {...subredditData} />
+        <div className="flex justify-center space-x-6">
+          <div className="flex flex-col w-[600px] space-y-2">
+            {postsData.length === 0 || !postsData ? (
+              <div>There are currently no posts.</div>
+            ) : (
+              postsData.map((post) => (
+                <PostCard key={post.id} singlePost={false} {...post} />
+              ))
+            )}
+          </div>
+          <div className=" space-y-4">
+            <InfoCard {...subredditData} />
+            <InfoCard {...subredditData} />
+          </div>
         </div>
-        <div className=" space-y-4">
-          <InfoCard {...subredditData} />
-          <InfoCard {...subredditData} />
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 

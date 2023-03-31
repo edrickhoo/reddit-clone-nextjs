@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import { checkJwtValidation } from "@/api/authApi";
 import jwtDecode from "jwt-decode";
+import Header from "@/components/Header";
 
 interface CreatePostProps {
   register: UseFormRegister<PostDto>;
@@ -123,15 +124,19 @@ export default function CreatePostPage() {
   }
 
   const onPostSubmit = async (data: PostDto) => {
-    await checkJwtValidation();
-    data.subredditName = `${slug}`;
+    try {
+      await checkJwtValidation();
+      data.subredditName = `${slug}`;
 
-    const postParams = {
-      postDto: data,
-      jwt: cookies.get("jwt"),
-    };
-    console.log({ postParams });
-    mutate(postParams);
+      const postParams = {
+        postDto: data,
+        jwt: cookies.get("jwt"),
+      };
+      console.log({ postParams });
+      mutate(postParams);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -142,6 +147,7 @@ export default function CreatePostPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header />
       <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10">
         <CreatePost
           postMutateLoading={postMutateLoading}

@@ -20,6 +20,7 @@ import { checkJwtValidation, parseJwt } from "@/api/authApi";
 import Jwt from "jwt-decode";
 import jwtDecode from "jwt-decode";
 import { GetStaticProps } from "next";
+import Header from "@/components/Header";
 
 dayjs.extend(relativeTime);
 
@@ -136,15 +137,19 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   } = useForm<CommentDto>();
 
   const onCommentSubmit = async (data: CommentDto) => {
-    await checkJwtValidation();
-    data.postId = Number(id);
-    data.userName = parseJwt(cookies.get("jwt")).sub;
-    const dto = {
-      commentDto: data,
-      jwt: cookies.get("jwt"),
-      postId: Number(data.postId),
-    };
-    mutate(dto);
+    try {
+      await checkJwtValidation();
+      data.postId = Number(id);
+      data.userName = parseJwt(cookies.get("jwt")).sub;
+      const dto = {
+        commentDto: data,
+        jwt: cookies.get("jwt"),
+        postId: Number(data.postId),
+      };
+      mutate(dto);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   if (
@@ -164,6 +169,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
 
   return (
     <>
+      <Header />
       <main className="max-w-[1280px] mx-auto py-16">
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">

@@ -37,5 +37,8 @@ export const checkJwtValidation = async () => {
     cookies.set("jwt", res.data.authenticationToken);
     cookies.set("jwt-refresh", res.data.refreshToken);
     cookies.set("jwt-expire", res.data.expiresAt);
+    return true;
   }
+
+  throw new Error("User is not logged in");
 };

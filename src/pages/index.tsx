@@ -8,6 +8,7 @@ import { cookies, fetchSubreddits } from "@/api/subredditApi";
 import { useQuery } from "react-query";
 import { LoadingPage } from "@/components/LoadingSpinner";
 import Link from "next/link";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [user, setUser] = useContext(UserContext);
@@ -37,6 +38,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header />
       <main className="max-w-[1280px] mx-auto">
         <h2 className="text-center font-semibold text-2xl my-5 text-slate-50">
           Subreddits
