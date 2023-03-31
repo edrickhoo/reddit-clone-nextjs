@@ -12,31 +12,7 @@ import { useEffect, useState } from "react";
 import { GetStaticProps } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
-
-const BannerInfo = ({ name }: Subreddit) => {
-  return (
-    <div>
-      <div>
-        <Image src="" alt="Subreddit Banner" />
-      </div>
-      <div>
-        <div className="flex space-x-4">
-          <Image src="" alt="Subreddit Icon" />
-          <div>
-            <div className="flex space-x-4">
-              <h2>{name}</h2> <button>Subscribe</button>
-            </div>
-            <p>r/subreddit</p>
-          </div>
-        </div>
-        <div>
-          <a>Posts</a>
-          <a>Rules</a>
-        </div>
-      </div>
-    </div>
-  );
-};
+import BannerInfo from "@/components/BannerInfo";
 
 export default function SubredditHome({ slug }: { slug: string }) {
   // const cookies = new Cookies();
@@ -74,8 +50,8 @@ export default function SubredditHome({ slug }: { slug: string }) {
   return (
     <>
       <Header />
-      <main className="max-w-[1280px] mx-auto">
-        <BannerInfo {...subredditData} />
+      <main className="max-w-[1280px] mx-auto pt-24">
+        <BannerInfo {...subredditData} singlePost={false} />
         <div className="flex justify-center space-x-6">
           <div className="flex flex-col w-[600px] space-y-2">
             {postsData.length === 0 || !postsData ? (

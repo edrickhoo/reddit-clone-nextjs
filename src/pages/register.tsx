@@ -1,52 +1,61 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { loginApi, LoginData } from "../api/authApi";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
-import { cookies } from "@/api/subredditApi";
-import { useRouter } from "next/router";
+import { cookies, RegisterDto, registerUser } from "@/api/subredditApi";
+import router, { useRouter } from "next/router";
 import Header from "@/components/Header";
-import Link from "next/link";
 import { useMutation } from "react-query";
+import Link from "next/link";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-const Login = () => {
+const Register = () => {
   const [user, setUser] = useContext(UserContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>();
+  } = useForm<RegisterDto>();
   const router = useRouter();
-
-  const { mutate, isLoading, data } = useMutation(loginApi, {
-    onSuccess: (newData) => {
-      console.log(newData);
-      cookies.set("jwt", newData.authenticationToken);
-      cookies.set("jwt-refresh", newData.refreshToken);
-      cookies.set("jwt-expire", newData.expiresAt);
-      setUser({ ...user, user: newData.username });
-      router.push("/");
-    },
-  });
 
   useEffect(() => {
     console.log(user);
   }, [user]);
 
-  const onSubmit = async (loginDto: LoginData) => {
+  const { mutate, isLoading, isSuccess } = useMutation(registerUser, {
+    onSuccess: (data) => {
+      setTimeout(() => {
+        router.push("/");
+      }, 5000);
+    },
+  });
+
+  const onSubmit = async (data: RegisterDto) => {
     try {
-      mutate(loginDto);
+      mutate(data);
     } catch (e) {
       console.log(e);
     }
   };
 
+  if (isSuccess) {
+    return (
+      <div className="flex justify-center items-center h-[100vh] relative">
+        <p className="bg-white rounded-md p-8 space-y-4">
+          Please verify email by clicking verification through email <br />
+          Redirecting in 5...
+        </p>
+        <div className="absolute h-full w-full bg-black/30 z-[-1]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center items-center h-[100vh] relative">
       <div className="bg-white rounded-md p-8 space-y-4">
         <div>
-          <span className="text-lg">Log In</span>
+          <span className="text-lg">Sign Up</span>
         </div>
         <form
           className="flex flex-col space-y-3"
@@ -59,25 +68,31 @@ const Login = () => {
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
           <input
+            {...register("email")}
+            type="text"
+            placeholder="Email"
+            className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
+          />
+          <input
             {...register("password")}
             type="password"
             placeholder="Password"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
 
-          <button className="rounded-full text-white bg-orange-600 hover:bg-orange-500 py-2">
-            Log In
+          <button
+            disabled={isLoading}
+            className="rounded-full text-white bg-orange-600 hover:bg-orange-500 py-2"
+          >
+            {isLoading ? <LoadingSpinner size={10} /> : "Sign up"}
           </button>
         </form>
 
         <div>
           <span>
-            New?{" "}
-            <Link
-              className="text-blue-500 hover:text-blue-600"
-              href={"/register"}
-            >
-              Sign Up
+            Existing User
+            <Link className="text-blue-500 hover:text-blue-600" href="/login">
+              Log In
             </Link>
           </span>
         </div>
@@ -87,7 +102,7 @@ const Login = () => {
   );
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <>
       <Head>
@@ -98,7 +113,7 @@ export default function LoginPage() {
       </Head>
       <Header />
       <main>
-        <Login />
+        <Register />
       </main>
     </>
   );

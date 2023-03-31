@@ -141,3 +141,36 @@ export const votePost = async (voteDto: VoteDto) => {
   console.log(res, "votePost");
   return res;
 };
+
+export interface SubredditDto {
+  name: string;
+  description: string;
+}
+
+export const createSubreddit = async (subredditDto: SubredditDto) => {
+  await checkJwtValidation();
+
+  const res = axios.post(BASE_URL + "subreddit", subredditDto, {
+    headers: {
+      Authorization: `Bearer ${cookies.get("jwt")}`,
+    },
+  });
+
+  console.log(res, "subreddit post");
+  return res;
+};
+
+export interface RegisterDto {
+  email: string;
+  username: string;
+  password: string;
+}
+
+export const registerUser = async (registerDto: RegisterDto) => {
+  console.log(registerDto);
+  const res = await axios.post(BASE_URL + "auth/signup", registerDto);
+
+  console.log(res, "register res");
+
+  return res;
+};

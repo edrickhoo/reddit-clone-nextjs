@@ -20,13 +20,20 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between px-8 py-5 bg-white">
+    <header className="flex justify-between px-8 py-5 bg-white fixed w-full z-30">
       <Link href="/">
         <img src="" alt="Reddit Icon" />
       </Link>
       <div className=" text-gray-500 px-2">
         <span className="border-r border-gray-600 pr-2 mr-2 text-blue-800">
-          {username || "Guest"}
+          {username || (
+            <Link
+              className=" text-gray-500 hover:text-red-600"
+              href="/register"
+            >
+              Register
+            </Link>
+          )}
         </span>
         {!username ? (
           <Link className="hover:text-red-600" href={"/login"}>

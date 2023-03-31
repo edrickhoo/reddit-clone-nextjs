@@ -1,17 +1,98 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { loginApi, loginData } from "../api/authApi";
 import { UserContext } from "@/context/UserContext";
-import { useContext, useEffect } from "react";
-import { cookies, fetchSubreddits } from "@/api/subredditApi";
-import { useQuery } from "react-query";
-import { LoadingPage } from "@/components/LoadingSpinner";
+import { useContext, useEffect, useState } from "react";
+import {
+  cookies,
+  createSubreddit,
+  fetchSubreddits,
+  SubredditDto,
+} from "@/api/subredditApi";
+import { useMutation, useQuery } from "react-query";
+import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import Link from "next/link";
 import Header from "@/components/Header";
+import { useRouter } from "next/router";
+
+interface CreateSubredditModalProps {
+  closeModal: () => void;
+}
+
+const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<SubredditDto>();
+  const router = useRouter();
+  const { mutate, isLoading: postMutateLoading } = useMutation(
+    createSubreddit,
+    {
+      onSuccess: (data) => {
+        reset();
+        alert("success");
+        router.push(`/`);
+        closeModal();
+      },
+      onError: () => {
+        alert("there was an error");
+      },
+    }
+  );
+
+  const onCreatePostSubmit = (subredditDto: SubredditDto) => {
+    mutate(subredditDto);
+  };
+
+  return (
+    <>
+      <div
+        onClick={closeModal}
+        className="fixed top-0 left-0 h-screen w-screen bg-black/50 z-10"
+      ></div>
+      <div className="max-w-[600px] bg-white rounded p-4 fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-20">
+        <h2 className="font-semibold pl-4 text-xl mb-3">Create Subreddit</h2>
+        <form
+          onSubmit={handleSubmit(onCreatePostSubmit)}
+          className="py-2 px-4 space-y-4"
+          action=""
+        >
+          <div className="flex flex-col space-y-3">
+            <input
+              {...register("name")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Subreddit Name"
+            />
+            <input
+              {...register("description")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Subreddit Description"
+            />
+          </div>
+          <hr />
+          <div className="flex justify-end">
+            <button
+              disabled={postMutateLoading}
+              className="py-1 px-5 rounded-2xl bg-gray-500"
+            >
+              {postMutateLoading ? <LoadingSpinner size={12} /> : "Create"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
+};
 
 export default function Home() {
   const [user, setUser] = useContext(UserContext);
+  const [createModal, setCreateModal] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     console.log(user);
   }, [user]);
@@ -21,6 +102,17 @@ export default function Home() {
     isLoading: subredditsLoading,
     error: subredditsError,
   } = useQuery("allSubreddits", () => fetchSubreddits());
+
+  const closeModal = () => {
+    setCreateModal(false);
+  };
+
+  const handleCreateButton = () => {
+    if (!cookies.get("jwt")) {
+      router.push("/login");
+    }
+    setCreateModal(true);
+  };
 
   if (subredditsLoading) {
     return <LoadingPage />;
@@ -39,10 +131,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="max-w-[1280px] mx-auto">
-        <h2 className="text-center font-semibold text-2xl my-5 text-slate-50">
-          Subreddits
-        </h2>
+      {createModal && <CreateSubredditModal closeModal={closeModal} />}
+      <main className="max-w-[1280px] mx-auto pt-24">
+        <div className="flex justify-center items-center">
+          <div className="flex-1"></div>
+          <h2 className="text-center font-semibold text-2xl my-5 text-slate-50 ">
+            Subreddits
+          </h2>
+          <div className="flex-1 flex justify-end">
+            <button
+              onClick={handleCreateButton}
+              className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 rounded-2xl py-1 text-center"
+            >
+              Create Subreddit
+            </button>
+          </div>
+        </div>
+        <hr className="mb-7" />
         <div className="flex justify-center space-x-6">
           <div className=" w-[600px] grid grid-cols-2 gap-2">
             {subredditData?.map((sub) => {

@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
-import { loginApi, loginData } from "../api/authApi";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import {
@@ -33,7 +32,7 @@ export const CreatePost = ({
 }: CreatePostProps) => {
   return (
     <div className="max-w-[600px] flex-1 py-4 space-y-3 ">
-      <div className="py-2">Create a post</div>
+      <div className="py-2 font-semibold text-xl text-white">Create a post</div>
       <hr />
 
       <div className="w-full bg-white rounded">
@@ -67,7 +66,7 @@ export const CreatePost = ({
           <div className="flex justify-end">
             <button
               disabled={postMutateLoading}
-              className="py-1 px-5 rounded-2xl bg-gray-500"
+              className="py-1 px-5 rounded-2xl bg-gray-500 text-white"
             >
               {postMutateLoading ? <LoadingSpinner size={12} /> : "Post"}
             </button>
@@ -125,6 +124,9 @@ export default function CreatePostPage() {
 
   const onPostSubmit = async (data: PostDto) => {
     try {
+      if (!cookies.get("jwt")) {
+        router.push("/login");
+      }
       await checkJwtValidation();
       data.subredditName = `${slug}`;
 
@@ -148,7 +150,7 @@ export default function CreatePostPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10">
+      <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10 pt-24">
         <CreatePost
           postMutateLoading={postMutateLoading}
           register={register}

@@ -21,6 +21,7 @@ import Jwt from "jwt-decode";
 import jwtDecode from "jwt-decode";
 import { GetStaticProps } from "next";
 import Header from "@/components/Header";
+import BannerInfo from "@/components/BannerInfo";
 
 dayjs.extend(relativeTime);
 
@@ -92,7 +93,7 @@ const Comment = (props: CommentPropsType) => {
 
 export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   const [user, setUser] = useContext(UserContext);
-
+  const router = useRouter();
   const {
     data: posts,
     isLoading,
@@ -138,6 +139,10 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
 
   const onCommentSubmit = async (data: CommentDto) => {
     try {
+      if (!cookies.get("jwt")) {
+        router.push("/login");
+      }
+
       await checkJwtValidation();
       data.postId = Number(id);
       data.userName = parseJwt(cookies.get("jwt")).sub;
@@ -170,7 +175,9 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   return (
     <>
       <Header />
-      <main className="max-w-[1280px] mx-auto py-16">
+
+      <main className="max-w-[1280px] mx-auto py-16 pt-24">
+        <BannerInfo {...subredditData} singlePost={true} />
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">
             <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2">

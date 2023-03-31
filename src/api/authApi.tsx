@@ -3,13 +3,24 @@ import { cookies } from "./subredditApi";
 
 export const BASE_URL = "http://localhost:8080/api/";
 
-export interface loginData {
+export interface LoginData {
   username: String;
   password: String;
 }
 
-export const loginApi = async (loginData: loginData) => {
-  const res = await axios.post(BASE_URL + "auth/login", loginData);
+interface LoginResponse {
+  authenticationToken: string;
+  refreshToken: string;
+  expiresAt: number;
+  username: string;
+}
+
+export const loginApi = async (loginData: LoginData) => {
+  console.log({ loginData });
+  const res = await axios.post<LoginResponse>(
+    BASE_URL + "auth/login",
+    loginData
+  );
   return res.data;
 };
 
