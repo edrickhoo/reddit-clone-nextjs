@@ -176,7 +176,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     <>
       <Header />
 
-      <main className="max-w-[1280px] mx-auto py-16 pt-16">
+      <main className="max-w-[1280px] mx-auto py-16 py-16">
         <BannerInfo {...subredditData} singlePost={true} />
         <div className="flex justify-center space-x-6 ">
           <div className="bg-white rounded-lg">
@@ -196,9 +196,15 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
                 <input type="text" placeholder="Search By User" />
               </div>
               <hr />
-              {comments?.map((comment) => (
-                <Comment {...comment} key={comment.id} />
-              ))}
+              {!comments || comments.length === 0 ? (
+                <div className="py-5 text-base">
+                  There are currently no comments. Be the first to comment.
+                </div>
+              ) : (
+                comments?.map((comment) => (
+                  <Comment {...comment} key={comment.id} />
+                ))
+              )}
             </div>
           </div>
 

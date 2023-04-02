@@ -132,7 +132,7 @@ export default function Home() {
       </Head>
       <Header />
       {createModal && <CreateSubredditModal closeModal={closeModal} />}
-      <main className="max-w-[1280px] mx-auto pt-16">
+      <main className="max-w-[1280px] mx-auto py-16">
         <div className="flex justify-center items-center">
           <div className="flex-1"></div>
           <h2 className="text-center font-semibold text-2xl my-5 text-slate-50 ">

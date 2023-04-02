@@ -50,7 +50,7 @@ export default function SubredditHome({ slug }: { slug: string }) {
   return (
     <>
       <Header />
-      <main className="max-w-[1280px] mx-auto pt-16">
+      <main className="max-w-[1280px] mx-auto py-16">
         <BannerInfo {...subredditData} singlePost={false} />
         <div className="flex justify-center space-x-6">
           <div className="flex flex-col w-[600px] space-y-2">
