@@ -9,17 +9,19 @@ import {
   fetchSubreddits,
   SubredditDto,
 } from "@/api/subredditApi";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 interface CreateSubredditModalProps {
   closeModal: () => void;
 }
 
 const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -33,12 +35,13 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
     {
       onSuccess: () => {
         reset();
-        alert("success");
-        router.push(`/`);
+        queryClient.invalidateQueries("allSubreddits");
+        toast("success");
         closeModal();
       },
-      onError: () => {
-        alert("there was an error");
+      onError: (e) => {
+        console.log(e, "error from creating subreddit");
+        toast("there was an error");
       },
     }
   );
@@ -135,7 +138,7 @@ export default function Home() {
       <main className="max-w-[1280px] mx-auto pt-16">
         <div className="flex justify-center items-center">
           <div className="flex-1"></div>
-          <h2 className="text-center font-semibold text-2xl my-5 text-slate-50 ">
+          <h2 className="text-center font-semibold text-2xl my-5 text-black ">
             Subreddits
           </h2>
           <div className="flex-1 flex justify-end">

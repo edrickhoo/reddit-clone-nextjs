@@ -15,7 +15,6 @@ import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
 
 export default function SubredditHome({ slug }: { slug: string }) {
-  // const cookies = new Cookies();
   console.log(slug, "brainslug");
   const [refresh, setRefresh] = useState(1);
 

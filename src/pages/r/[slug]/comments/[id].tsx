@@ -7,7 +7,13 @@ import InfoCard from "@/components/InfoCard";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
-import { useMutation, useQuery } from "react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 import {
   CommentDto,
   cookies,
@@ -16,12 +22,13 @@ import {
   fetchSubredditByName,
   postCommentToPost,
 } from "@/api/subredditApi";
-import { checkJwtValidation, parseJwt } from "@/api/authApi";
+import { parseJwt } from "@/api/authApi";
 import Jwt from "jwt-decode";
 import jwtDecode from "jwt-decode";
 import { GetStaticProps } from "next";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -92,6 +99,8 @@ const Comment = (props: CommentPropsType) => {
 };
 
 export default function SinglePost({ slug, id }: { slug: string; id: string }) {
+  const queryClient = useQueryClient();
+
   const [user, setUser] = useContext(UserContext);
   const router = useRouter();
   const {
@@ -120,11 +129,12 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     {
       onSuccess: (data) => {
         reset();
+        queryClient.invalidateQueries("postComments");
         const message = "success";
-        alert(message);
+        toast(message);
       },
       onError: () => {
-        alert("there was an error");
+        toast("there was an error");
       },
     }
   );
@@ -143,7 +153,6 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         router.push("/login");
       }
 
-      await checkJwtValidation();
       data.postId = Number(id);
       data.userName = parseJwt(cookies.get("jwt")).sub;
       const dto = {

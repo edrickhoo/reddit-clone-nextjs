@@ -3,7 +3,8 @@ import { AxiosResponse } from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
-import { UseMutateFunction, useMutation } from "react-query";
+import { toast } from "react-hot-toast";
+import { UseMutateFunction, useMutation, useQueryClient } from "react-query";
 import LoadingSpinner from "./LoadingSpinner";
 
 export interface PostParamsType {
@@ -32,14 +33,19 @@ const PostCard = ({
   commentCount,
 }: PostParamsType) => {
   const { slug } = router.query;
+  const queryClient = useQueryClient();
 
   const { mutate, isLoading: mutateLoading } = useMutation(votePost, {
     onSuccess: (data) => {
       const message = "success";
-      alert(message);
+      toast(message);
+      singlePost
+        ? queryClient.invalidateQueries("postInfo")
+        : queryClient.invalidateQueries("subredditPosts");
     },
-    onError: () => {
-      alert("there was an error");
+    onError: (e) => {
+      console.log(e);
+      toast("there was an error");
     },
   });
 
@@ -68,7 +74,7 @@ const PostCard = ({
     >
       <div
         className={` rounded-l-md ${
-          singlePost ? "rounded-b-none" : "bg-gray-500"
+          singlePost ? "rounded-b-none" : "bg-gray-200"
         }`}
       >
         <div className="max-w-[40px] flex flex-col items-center py-3 px-2 text-xs">
@@ -82,7 +88,7 @@ const PostCard = ({
             Up
           </button>
 
-          <div>{mutateLoading ? <LoadingSpinner size={10} /> : voteCount}</div>
+          <div>{voteCount}</div>
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -19,12 +19,20 @@ const Login = () => {
   } = useForm<LoginData>();
   const router = useRouter();
 
+  const cookieExpire = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+
   const { mutate, isLoading, data } = useMutation(loginApi, {
     onSuccess: (newData) => {
       console.log(newData);
-      cookies.set("jwt", newData.authenticationToken);
-      cookies.set("jwt-refresh", newData.refreshToken);
-      cookies.set("jwt-expire", newData.expiresAt);
+      cookies.set("jwt", newData.authenticationToken, {
+        expires: cookieExpire,
+      });
+      cookies.set("jwt-refresh", newData.refreshToken, {
+        expires: cookieExpire,
+      });
+      cookies.set("jwt-expire", newData.expiresAt, {
+        expires: cookieExpire,
+      });
       setUser({ ...user, user: newData.username });
       router.push("/");
     },

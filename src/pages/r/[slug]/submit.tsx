@@ -11,11 +11,11 @@ import {
 } from "@/api/subredditApi";
 import InfoCard from "@/components/InfoCard";
 import router, { useRouter } from "next/router";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
-import { checkJwtValidation } from "@/api/authApi";
 import jwtDecode from "jwt-decode";
 import Header from "@/components/Header";
+import { toast } from "react-hot-toast";
 
 interface CreatePostProps {
   register: UseFormRegister<PostDto>;
@@ -79,6 +79,7 @@ export const CreatePost = ({
 
 export default function CreatePostPage() {
   const [user, setUser] = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     console.log(user);
@@ -97,11 +98,12 @@ export default function CreatePostPage() {
     {
       onSuccess: (data) => {
         reset();
-        alert("success");
+        queryClient.invalidateQueries("subredditInfo");
+        toast("success");
         router.push(`/r/${slug}`);
       },
       onError: () => {
-        alert("there was an error");
+        toast("there was an error");
       },
     }
   );
@@ -127,7 +129,6 @@ export default function CreatePostPage() {
       if (!cookies.get("jwt")) {
         router.push("/login");
       }
-      await checkJwtValidation();
       data.subredditName = `${slug}`;
 
       const postParams = {

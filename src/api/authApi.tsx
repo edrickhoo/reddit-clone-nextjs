@@ -34,6 +34,8 @@ export function parseJwt(token: string) {
 }
 
 export const checkJwtValidation = async () => {
+  const cookieExpire = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+
   if (Date.now() / 1000 < cookies.get("jwt-expire")) {
     return;
   }
@@ -45,9 +47,15 @@ export const checkJwtValidation = async () => {
     });
     cookies.remove("jwt");
     cookies.remove("jwt-expire");
-    cookies.set("jwt", res.data.authenticationToken);
-    cookies.set("jwt-refresh", res.data.refreshToken);
-    cookies.set("jwt-expire", res.data.expiresAt);
+    cookies.set("jwt", res.data.authenticationToken, {
+      expires: cookieExpire,
+    });
+    cookies.set("jwt-refresh", res.data.refreshToken, {
+      expires: cookieExpire,
+    });
+    cookies.set("jwt-expire", res.data.expiresAt, {
+      expires: cookieExpire,
+    });
     return true;
   }
 
