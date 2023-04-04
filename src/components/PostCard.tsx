@@ -79,7 +79,7 @@ const PostCard = ({
       }
       className={`flex w-full  border border-gray-400 ${
         singlePost
-          ? "rounded-lg rounded-b-none border-none bg-white cursor-default"
+          ? "min-h-[200px] rounded-lg rounded-b-none border-none bg-white cursor-default"
           : "rounded-lg bg-slate-100"
       }`}
     >
