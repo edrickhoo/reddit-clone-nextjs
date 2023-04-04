@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect, useState } from "react";
@@ -15,7 +14,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { truncate } from "fs";
+import axios from "axios";
 
 interface CreateSubredditModalProps {
   closeModal: () => void;
@@ -37,12 +36,24 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
       onSuccess: () => {
         reset();
         queryClient.invalidateQueries("allSubreddits");
-        toast("success");
+        const message = "Success";
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
         closeModal();
       },
       onError: (e) => {
-        console.log(e, "error from creating subreddit");
-        toast("there was an error");
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );

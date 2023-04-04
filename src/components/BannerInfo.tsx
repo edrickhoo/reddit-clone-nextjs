@@ -1,4 +1,3 @@
-import { Subreddit } from "@/api/subredditApi";
 import Image from "next/image";
 import Link from "next/link";
 

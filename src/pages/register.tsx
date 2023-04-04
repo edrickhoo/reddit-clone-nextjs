@@ -3,12 +3,14 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
-import { cookies, RegisterDto, registerUser } from "@/api/subredditApi";
-import router, { useRouter } from "next/router";
+import { RegisterDto, registerUser } from "@/api/subredditApi";
+import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { useMutation } from "react-query";
 import Link from "next/link";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [user, setUser] = useContext(UserContext);
@@ -29,14 +31,22 @@ const Register = () => {
         router.push("/");
       }, 5000);
     },
+    onError: (e) => {
+      if (axios.isAxiosError(e)) {
+        toast(e.response?.data?.error, {
+          style: {
+            color: "red",
+          },
+          position: "top-center",
+        });
+      } else if (e instanceof Error) {
+        toast(e.message);
+      }
+    },
   });
 
   const onSubmit = async (data: RegisterDto) => {
-    try {
-      mutate(data);
-    } catch (e) {
-      console.log(e);
-    }
+    mutate(data);
   };
 
   if (isSuccess) {

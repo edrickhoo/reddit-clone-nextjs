@@ -15,12 +15,12 @@ import {
   postSubredditPost,
 } from "@/api/subredditApi";
 import InfoCard from "@/components/InfoCard";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
-import jwtDecode from "jwt-decode";
 import Header from "@/components/Header";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface CreatePostProps {
   register: UseFormRegister<PostDto>;
@@ -111,11 +111,24 @@ export default function CreatePostPage() {
       onSuccess: (data) => {
         reset();
         queryClient.invalidateQueries("subredditInfo");
-        toast("success");
+        const message = "Success";
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
         router.push(`/r/${slug}`);
       },
-      onError: () => {
-        toast("there was an error");
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );

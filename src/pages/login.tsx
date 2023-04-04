@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { loginApi, LoginData } from "../api/authApi";
 import { UserContext } from "@/context/UserContext";
@@ -9,6 +8,8 @@ import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { useMutation } from "react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [user, setUser] = useContext(UserContext);
@@ -23,7 +24,6 @@ const Login = () => {
 
   const { mutate, isLoading, data } = useMutation(loginApi, {
     onSuccess: (newData) => {
-      console.log(newData);
       cookies.set("jwt", newData.authenticationToken, {
         expires: cookieExpire,
       });
@@ -36,6 +36,18 @@ const Login = () => {
       setUser({ ...user, user: newData.username });
       router.push("/");
     },
+    onError: (e) => {
+      if (axios.isAxiosError(e)) {
+        toast(e.response?.data?.error, {
+          style: {
+            color: "red",
+          },
+          position: "top-center",
+        });
+      } else if (e instanceof Error) {
+        toast(e.message);
+      }
+    },
   });
 
   useEffect(() => {
@@ -43,11 +55,7 @@ const Login = () => {
   }, [user]);
 
   const onSubmit = async (loginDto: LoginData) => {
-    try {
-      mutate(loginDto);
-    } catch (e) {
-      console.log(e);
-    }
+    mutate(loginDto);
   };
 
   return (

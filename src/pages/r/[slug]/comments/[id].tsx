@@ -20,13 +20,13 @@ import {
   fetchSinglePost,
   fetchSubredditByName,
   postCommentToPost,
-  PostDto,
 } from "@/api/subredditApi";
 import { parseJwt } from "@/api/authApi";
 import { GetStaticProps } from "next";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 dayjs.extend(relativeTime);
 
@@ -136,10 +136,22 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         reset();
         queryClient.invalidateQueries("postComments");
         const message = "success";
-        toast(message);
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
       },
-      onError: () => {
-        toast("there was an error");
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );

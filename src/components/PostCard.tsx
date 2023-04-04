@@ -1,11 +1,10 @@
-import { VoteDto, votePost } from "@/api/subredditApi";
-import { AxiosResponse } from "axios";
+import { votePost } from "@/api/subredditApi";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
 import { toast } from "react-hot-toast";
-import { UseMutateFunction, useMutation, useQueryClient } from "react-query";
-import LoadingSpinner from "./LoadingSpinner";
+import { useMutation, useQueryClient } from "react-query";
 
 export interface PostParamsType {
   id: number;
@@ -37,15 +36,27 @@ const PostCard = ({
 
   const { mutate, isLoading: mutateLoading } = useMutation(votePost, {
     onSuccess: (data) => {
-      const message = "success";
-      toast(message);
+      const message = "Success";
+      toast(message, {
+        style: {
+          color: "green",
+        },
+      });
       singlePost
         ? queryClient.invalidateQueries("postInfo")
         : queryClient.invalidateQueries("subredditPosts");
     },
     onError: (e) => {
       console.log(e);
-      toast("there was an error");
+      if (axios.isAxiosError(e)) {
+        toast(e.response?.data?.error, {
+          style: {
+            color: "red",
+          },
+        });
+      } else if (e instanceof Error) {
+        toast(e.message);
+      }
     },
   });
 
