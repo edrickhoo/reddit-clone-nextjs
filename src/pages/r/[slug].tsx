@@ -1,21 +1,18 @@
-import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import {
   fetchSubredditByName,
   fetchSubredditPosts,
-  Subreddit,
 } from "../../api/subredditApi";
 import InfoCard from "@/components/InfoCard";
 import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GetStaticProps } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
 
 export default function SubredditHome({ slug }: { slug: string }) {
-  // const cookies = new Cookies();
   console.log(slug, "brainslug");
   const [refresh, setRefresh] = useState(1);
 

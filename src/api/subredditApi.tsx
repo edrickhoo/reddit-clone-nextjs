@@ -88,7 +88,7 @@ export const postCommentToPost = async ({
   jwt,
   postId,
 }: CommentParams) => {
-  console.log(commentDto, jwt, postId);
+  await checkJwtValidation();
   const res = await axios.post(
     BASE_URL + `comments?postId=${postId}`,
     commentDto,
@@ -114,6 +114,7 @@ export interface PostParams {
 }
 
 export const postSubredditPost = async ({ postDto, jwt }: PostParams) => {
+  await checkJwtValidation();
   const res = await axios.post(BASE_URL + "posts", postDto, {
     headers: {
       Authorization: `Bearer ${jwt}`,

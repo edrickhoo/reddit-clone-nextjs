@@ -1,13 +1,18 @@
-import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import {
+  FieldErrors,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useRouter } from "next/router";
 import PostCard from "@/components/PostCard";
 import InfoCard from "@/components/InfoCard";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   CommentDto,
   cookies,
@@ -16,12 +21,12 @@ import {
   fetchSubredditByName,
   postCommentToPost,
 } from "@/api/subredditApi";
-import { checkJwtValidation, parseJwt } from "@/api/authApi";
-import Jwt from "jwt-decode";
-import jwtDecode from "jwt-decode";
+import { parseJwt } from "@/api/authApi";
 import { GetStaticProps } from "next";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 dayjs.extend(relativeTime);
 
@@ -30,12 +35,14 @@ interface CommentSectProps {
   onCommentSubmit: (data: CommentDto) => void;
   handleSubmit: UseFormHandleSubmit<CommentDto>;
   commentMutateLoading: boolean;
+  errors: FieldErrors<CommentDto>;
 }
 const CommentSect = ({
   register,
   onCommentSubmit,
   handleSubmit,
   commentMutateLoading,
+  errors,
 }: CommentSectProps) => {
   return (
     <div>
@@ -45,12 +52,17 @@ const CommentSect = ({
           className="border-gray-100 border rounded-md"
         >
           <textarea
-            {...register("text")}
+            {...register("text", { required: true })}
             className="w-full py-2 px-4"
             placeholder="What are your thoughts?"
             cols={15}
             rows={10}
           ></textarea>
+          {errors.text?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Comment text is required
+            </p>
+          )}
           <div className="flex justify-end bg-slate-200 py-1 rounded-b">
             <button
               disabled={commentMutateLoading}
@@ -92,6 +104,8 @@ const Comment = (props: CommentPropsType) => {
 };
 
 export default function SinglePost({ slug, id }: { slug: string; id: string }) {
+  const queryClient = useQueryClient();
+
   const [user, setUser] = useContext(UserContext);
   const router = useRouter();
   const {
@@ -120,11 +134,24 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     {
       onSuccess: (data) => {
         reset();
+        queryClient.invalidateQueries("postComments");
         const message = "success";
-        alert(message);
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
       },
-      onError: () => {
-        alert("there was an error");
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );
@@ -143,7 +170,6 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         router.push("/login");
       }
 
-      await checkJwtValidation();
       data.postId = Number(id);
       data.userName = parseJwt(cookies.get("jwt")).sub;
       const dto = {
@@ -191,6 +217,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
                 onCommentSubmit={onCommentSubmit}
                 handleSubmit={handleSubmit}
                 register={register}
+                errors={errors}
               />
               <div>
                 <input type="text" placeholder="Search By User" />

@@ -1,10 +1,10 @@
-import { VoteDto, votePost } from "@/api/subredditApi";
-import { AxiosResponse } from "axios";
+import { votePost } from "@/api/subredditApi";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
-import { UseMutateFunction, useMutation } from "react-query";
-import LoadingSpinner from "./LoadingSpinner";
+import { toast } from "react-hot-toast";
+import { useMutation, useQueryClient } from "react-query";
 
 export interface PostParamsType {
   id: number;
@@ -32,14 +32,31 @@ const PostCard = ({
   commentCount,
 }: PostParamsType) => {
   const { slug } = router.query;
+  const queryClient = useQueryClient();
 
   const { mutate, isLoading: mutateLoading } = useMutation(votePost, {
     onSuccess: (data) => {
-      const message = "success";
-      alert(message);
+      const message = "Success";
+      toast(message, {
+        style: {
+          color: "green",
+        },
+      });
+      singlePost
+        ? queryClient.invalidateQueries("postInfo")
+        : queryClient.invalidateQueries("subredditPosts");
     },
-    onError: () => {
-      alert("there was an error");
+    onError: (e) => {
+      console.log(e);
+      if (axios.isAxiosError(e)) {
+        toast(e.response?.data?.error, {
+          style: {
+            color: "red",
+          },
+        });
+      } else if (e instanceof Error) {
+        toast(e.message);
+      }
     },
   });
 
@@ -68,7 +85,7 @@ const PostCard = ({
     >
       <div
         className={` rounded-l-md ${
-          singlePost ? "rounded-b-none" : "bg-gray-500"
+          singlePost ? "rounded-b-none" : "bg-gray-200"
         }`}
       >
         <div className="max-w-[40px] flex flex-col items-center py-3 px-2 text-xs">
@@ -82,7 +99,7 @@ const PostCard = ({
             Up
           </button>
 
-          <div>{mutateLoading ? <LoadingSpinner size={10} /> : voteCount}</div>
+          <div>{voteCount}</div>
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -3,12 +3,14 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
-import { cookies, RegisterDto, registerUser } from "@/api/subredditApi";
-import router, { useRouter } from "next/router";
+import { RegisterDto, registerUser } from "@/api/subredditApi";
+import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { useMutation } from "react-query";
 import Link from "next/link";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [user, setUser] = useContext(UserContext);
@@ -29,14 +31,22 @@ const Register = () => {
         router.push("/");
       }, 5000);
     },
+    onError: (e) => {
+      if (axios.isAxiosError(e)) {
+        toast(e.response?.data?.error, {
+          style: {
+            color: "red",
+          },
+          position: "top-center",
+        });
+      } else if (e instanceof Error) {
+        toast(e.message);
+      }
+    },
   });
 
   const onSubmit = async (data: RegisterDto) => {
-    try {
-      mutate(data);
-    } catch (e) {
-      console.log(e);
-    }
+    mutate(data);
   };
 
   if (isSuccess) {
@@ -62,23 +72,47 @@ const Register = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            {...register("username")}
+            {...register("username", { required: true })}
             type="text"
             placeholder="Username"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.username?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Username is required
+            </p>
+          )}
           <input
-            {...register("email")}
+            {...register("email", {
+              required: true,
+              pattern:
+                /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+            })}
             type="text"
             placeholder="Email"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.email?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Email is required
+            </p>
+          )}
+          {errors.email?.type === "pattern" && (
+            <p className="text-red-600" role="alert">
+              Invalid example@ex.com
+            </p>
+          )}
           <input
-            {...register("password")}
+            {...register("password", { required: true })}
             type="password"
             placeholder="Password"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.password?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Password is required
+            </p>
+          )}
 
           <button
             disabled={isLoading}

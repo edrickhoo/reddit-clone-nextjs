@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect, useState } from "react";
@@ -9,17 +8,20 @@ import {
   fetchSubreddits,
   SubredditDto,
 } from "@/api/subredditApi";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 interface CreateSubredditModalProps {
   closeModal: () => void;
 }
 
 const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -33,12 +35,25 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
     {
       onSuccess: () => {
         reset();
-        alert("success");
-        router.push(`/`);
+        queryClient.invalidateQueries("allSubreddits");
+        const message = "Success";
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
         closeModal();
       },
-      onError: () => {
-        alert("there was an error");
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );
@@ -62,17 +77,27 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
         >
           <div className="flex flex-col space-y-3">
             <input
-              {...register("name")}
+              {...register("name", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Subreddit Name"
             />
+            {errors.name?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Subreddit name is required
+              </p>
+            )}
             <input
-              {...register("description")}
+              {...register("description", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Subreddit Description"
             />
+            {errors.description?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Description is required
+              </p>
+            )}
           </div>
           <hr />
           <div className="flex justify-end">
@@ -135,7 +160,7 @@ export default function Home() {
       <main className="max-w-[1280px] mx-auto py-16">
         <div className="flex justify-center items-center">
           <div className="flex-1"></div>
-          <h2 className="text-center font-semibold text-2xl my-5 text-slate-50 ">
+          <h2 className="text-center font-semibold text-2xl my-5 text-black ">
             Subreddits
           </h2>
           <div className="flex-1 flex justify-end">

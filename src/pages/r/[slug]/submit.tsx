@@ -1,6 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import {
+  FieldErrors,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import {
@@ -10,18 +15,19 @@ import {
   postSubredditPost,
 } from "@/api/subredditApi";
 import InfoCard from "@/components/InfoCard";
-import router, { useRouter } from "next/router";
-import { useMutation, useQuery } from "react-query";
+import { useRouter } from "next/router";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
-import { checkJwtValidation } from "@/api/authApi";
-import jwtDecode from "jwt-decode";
 import Header from "@/components/Header";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface CreatePostProps {
   register: UseFormRegister<PostDto>;
   handleSubmit: UseFormHandleSubmit<PostDto>;
   onPostSubmit: (data: PostDto) => Promise<void>;
   postMutateLoading: boolean;
+  errors: FieldErrors<PostDto>;
 }
 
 export const CreatePost = ({
@@ -29,6 +35,7 @@ export const CreatePost = ({
   handleSubmit,
   onPostSubmit,
   postMutateLoading,
+  errors,
 }: CreatePostProps) => {
   return (
     <div className="max-w-[600px] flex-1 py-4 space-y-3 ">
@@ -51,11 +58,16 @@ export const CreatePost = ({
         >
           <div className="flex flex-col space-y-2">
             <input
-              {...register("postName")}
+              {...register("postName", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Title"
             />
+            {errors.postName?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Title is required
+              </p>
+            )}
             <textarea
               {...register("description")}
               className="px-5 py-2 border min-h-[120px]"
@@ -79,6 +91,7 @@ export const CreatePost = ({
 
 export default function CreatePostPage() {
   const [user, setUser] = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     console.log(user);
@@ -97,11 +110,25 @@ export default function CreatePostPage() {
     {
       onSuccess: (data) => {
         reset();
-        alert("success");
+        queryClient.invalidateQueries("subredditInfo");
+        const message = "Success";
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
         router.push(`/r/${slug}`);
       },
-      onError: () => {
-        alert("there was an error");
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
       },
     }
   );
@@ -127,7 +154,6 @@ export default function CreatePostPage() {
       if (!cookies.get("jwt")) {
         router.push("/login");
       }
-      await checkJwtValidation();
       data.subredditName = `${slug}`;
 
       const postParams = {
@@ -156,6 +182,7 @@ export default function CreatePostPage() {
           register={register}
           handleSubmit={handleSubmit}
           onPostSubmit={onPostSubmit}
+          errors={errors}
         />
         <div className=" space-y-4">
           <InfoCard {...data} />
