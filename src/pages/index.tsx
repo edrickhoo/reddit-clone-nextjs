@@ -15,6 +15,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { truncate } from "fs";
 
 interface CreateSubredditModalProps {
   closeModal: () => void;
@@ -65,17 +66,27 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
         >
           <div className="flex flex-col space-y-3">
             <input
-              {...register("name")}
+              {...register("name", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Subreddit Name"
             />
+            {errors.name?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Subreddit name is required
+              </p>
+            )}
             <input
-              {...register("description")}
+              {...register("description", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Subreddit Description"
             />
+            {errors.description?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Description is required
+              </p>
+            )}
           </div>
           <hr />
           <div className="flex justify-end">

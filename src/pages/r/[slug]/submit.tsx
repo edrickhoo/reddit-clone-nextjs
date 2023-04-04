@@ -1,6 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useForm, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import {
+  FieldErrors,
+  useForm,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import {
@@ -22,6 +27,7 @@ interface CreatePostProps {
   handleSubmit: UseFormHandleSubmit<PostDto>;
   onPostSubmit: (data: PostDto) => Promise<void>;
   postMutateLoading: boolean;
+  errors: FieldErrors<PostDto>;
 }
 
 export const CreatePost = ({
@@ -29,6 +35,7 @@ export const CreatePost = ({
   handleSubmit,
   onPostSubmit,
   postMutateLoading,
+  errors,
 }: CreatePostProps) => {
   return (
     <div className="max-w-[600px] flex-1 py-4 space-y-3 ">
@@ -51,11 +58,16 @@ export const CreatePost = ({
         >
           <div className="flex flex-col space-y-2">
             <input
-              {...register("postName")}
+              {...register("postName", { required: true })}
               className="px-5 py-2 border"
               type="text"
               placeholder="Title"
             />
+            {errors.postName?.type === "required" && (
+              <p className="text-red-600" role="alert">
+                Title is required
+              </p>
+            )}
             <textarea
               {...register("description")}
               className="px-5 py-2 border min-h-[120px]"
@@ -157,6 +169,7 @@ export default function CreatePostPage() {
           register={register}
           handleSubmit={handleSubmit}
           onPostSubmit={onPostSubmit}
+          errors={errors}
         />
         <div className=" space-y-4">
           <InfoCard {...data} />

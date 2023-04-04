@@ -61,17 +61,27 @@ const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            {...register("username")}
+            {...register("username", { required: true })}
             type="text"
             placeholder="Username"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.username?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Username is required
+            </p>
+          )}
           <input
-            {...register("password")}
+            {...register("password", { required: true })}
             type="password"
             placeholder="Password"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.password?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Password is required
+            </p>
+          )}
 
           <button className="rounded-full text-white bg-orange-600 hover:bg-orange-500 py-2">
             Log In

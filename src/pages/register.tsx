@@ -62,23 +62,47 @@ const Register = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <input
-            {...register("username")}
+            {...register("username", { required: true })}
             type="text"
             placeholder="Username"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.username?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Username is required
+            </p>
+          )}
           <input
-            {...register("email")}
+            {...register("email", {
+              required: true,
+              pattern:
+                /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+            })}
             type="text"
             placeholder="Email"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.email?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Email is required
+            </p>
+          )}
+          {errors.email?.type === "pattern" && (
+            <p className="text-red-600" role="alert">
+              Invalid example@ex.com
+            </p>
+          )}
           <input
-            {...register("password")}
+            {...register("password", { required: true })}
             type="password"
             placeholder="Password"
             className="px-2 py-1 rounded-full bg-slate-100 focus:outline-1 outline-slate-500"
           />
+          {errors.password?.type === "required" && (
+            <p className="text-red-600" role="alert">
+              Password is required
+            </p>
+          )}
 
           <button
             disabled={isLoading}
