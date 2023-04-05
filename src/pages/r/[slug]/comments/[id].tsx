@@ -223,9 +223,15 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
                 <input type="text" placeholder="Search By User" />
               </div>
               <hr />
-              {comments?.map((comment) => (
-                <Comment commentData={comment} key={comment.id} />
-              ))}
+              {!comments || comments.length === 0 ? (
+                <div className="py-5 text-base">
+                  There are currently no comments. Be the first to comment.
+                </div>
+              ) : (
+                comments?.map((comment) => (
+                  <Comment {...comment} key={comment.id} />
+                ))
+              )}
             </div>
           </div>
 

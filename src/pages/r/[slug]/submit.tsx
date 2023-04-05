@@ -176,7 +176,7 @@ export default function CreatePostPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10 pt-16">
+      <main className="max-w-[1280px] mx-auto flex justify-center space-x-6 py-10 py-16">
         <CreatePost
           postMutateLoading={postMutateLoading}
           register={register}
