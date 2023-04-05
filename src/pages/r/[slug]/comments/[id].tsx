@@ -229,7 +229,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
                 </div>
               ) : (
                 comments?.map((comment) => (
-                  <Comment {...comment} key={comment.id} />
+                  <Comment commentData={comment} key={comment.id} />
                 ))
               )}
             </div>
