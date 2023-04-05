@@ -7,6 +7,9 @@ export interface Subreddit {
   id: number;
   name: string;
   numberOfPosts: number;
+  createdDate: number;
+  bgUrl: string;
+  iconUrl: string;
 }
 
 export const cookies = new Cookies();
@@ -54,7 +57,7 @@ export const fetchSinglePost = async (postId: string) => {
   return [res.data];
 };
 
-interface Comment {
+export interface Comment {
   id: number;
   postId: number;
   createdDate: number;
@@ -88,7 +91,6 @@ export const postCommentToPost = async ({
   jwt,
   postId,
 }: CommentParams) => {
-  await checkJwtValidation();
   const res = await axios.post(
     BASE_URL + `comments?postId=${postId}`,
     commentDto,

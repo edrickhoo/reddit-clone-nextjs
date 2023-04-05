@@ -1,3 +1,4 @@
+import { Subreddit } from "@/api/subredditApi";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -6,12 +7,11 @@ import defaultIcon from "../assets/default-icon.png";
 
 interface BannerInfoProps {
   singlePost: Boolean;
-  name: string;
-  bgUrl: string;
-  iconUrl: string;
+  subredditData: Subreddit;
 }
 
-const BannerInfo = ({ name, singlePost, bgUrl, iconUrl }: BannerInfoProps) => {
+const BannerInfo = ({ subredditData, singlePost }: BannerInfoProps) => {
+  const { name, bgUrl, iconUrl } = subredditData;
   const [error, setError] = useState({
     bg: false,
     icon: false,

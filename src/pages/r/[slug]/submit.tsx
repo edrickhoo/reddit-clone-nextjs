@@ -185,8 +185,8 @@ export default function CreatePostPage() {
           errors={errors}
         />
         <div className=" space-y-4">
-          <InfoCard {...data} />
-          <InfoCard {...data} />
+          <InfoCard subredditData={data} />
+          <InfoCard subredditData={data} />
         </div>
       </main>
     </>

@@ -17,11 +17,11 @@ const Header = () => {
 
   const logout = () => {
     setUsername("");
-    cookies.remove("jwt");
-    cookies.remove("jwt-refresh");
-    cookies.remove("jwt-expire");
+    cookies.remove("jwt", { path: "/" });
+    cookies.remove("jwt-refresh", { path: "/" });
+    cookies.remove("jwt-expire", { path: "/" });
     toast("Successfully logged out", {
-      duration: 2000,
+      duration: 1000,
     });
   };
 
