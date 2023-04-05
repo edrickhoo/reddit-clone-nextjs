@@ -2,8 +2,8 @@ import { Subreddit } from "@/api/subredditApi";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import defaultBg from "../assets/default-bg.jpg";
-import defaultIcon from "../assets/default-icon.png";
+import defaultBg from "/default-bg.jpg";
+import defaultIcon from "/default-icon.png";
 
 interface BannerInfoProps {
   singlePost: Boolean;
