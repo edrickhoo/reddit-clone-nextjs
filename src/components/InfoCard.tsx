@@ -1,8 +1,13 @@
 import { Subreddit } from "@/api/subredditApi";
 import Image from "next/image";
 import Link from "next/link";
+import { HiOutlineCake } from "react-icons/hi";
 
-const InfoCard = ({ description, name }: Subreddit) => {
+interface InfoCardProps {
+  subredditData: Subreddit;
+}
+const InfoCard = ({ subredditData }: InfoCardProps) => {
+  const { description, name, createdDate } = subredditData;
   return (
     <div className="border-1-white rounded max-w-[320px] border-white border bg-white">
       <div className="py-2 px-4 bg-yellow-700 text-white rounded-sm">
@@ -10,8 +15,9 @@ const InfoCard = ({ description, name }: Subreddit) => {
       </div>
       <div className="py-2 px-4 space-y-3">
         <p>{description}</p>
-        <div className="flex space-x-2">
-          <Image src="" alt="cake" /> <p>Created DATEOFCREATION</p>
+        <div className="flex space-x-2 items-center">
+          <HiOutlineCake size={20} className="text-red-400" />
+          <p>Created {new Date(createdDate * 1000).toLocaleDateString()}</p>
         </div>
       </div>
       <hr />

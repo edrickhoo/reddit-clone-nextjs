@@ -98,6 +98,18 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
                 Description is required
               </p>
             )}
+            <input
+              {...register("bgUrl")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Background URL"
+            />
+            <input
+              {...register("iconUrl")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Icon URL"
+            />
           </div>
           <hr />
           <div className="flex justify-end">
@@ -157,8 +169,8 @@ export default function Home() {
       </Head>
       <Header />
       {createModal && <CreateSubredditModal closeModal={closeModal} />}
-      <main className="max-w-[1280px] mx-auto py-16">
-        <div className="flex justify-center items-center">
+      <main className=" pt-16">
+        <div className="flex justify-center items-center max-w-[1280px] mx-auto">
           <div className="flex-1"></div>
           <h2 className="text-center font-semibold text-2xl my-5 text-black ">
             Subreddits
@@ -173,7 +185,7 @@ export default function Home() {
           </div>
         </div>
         <hr className="mb-7" />
-        <div className="flex justify-center space-x-6">
+        <div className="flex justify-center space-x-6 max-w-[1280px] mx-auto">
           <div className=" w-[600px] grid grid-cols-2 gap-2">
             {!subredditData || subredditData.length === 0 ? (
               <div className="text-white text-lg pt-4">

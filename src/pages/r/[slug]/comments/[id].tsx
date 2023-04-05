@@ -21,12 +21,13 @@ import {
   fetchSubredditByName,
   postCommentToPost,
 } from "@/api/subredditApi";
-import { parseJwt } from "@/api/authApi";
+import { checkJwtValidation, parseJwt } from "@/api/authApi";
 import { GetStaticProps } from "next";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { Comment } from "../../../../api/subredditApi";
 
 dayjs.extend(relativeTime);
 
@@ -79,24 +80,20 @@ const CommentSect = ({
 };
 
 interface CommentPropsType {
-  id: number;
-  postId: number;
-  createdDate: number;
-  text: string;
-  userName: string;
+  commentData: Comment;
 }
 
-const Comment = (props: CommentPropsType) => {
+const Comment = ({ commentData }: CommentPropsType) => {
   return (
     <div className="">
       <div className="flex space-x-1 mb-1">
-        <span className="font-semibold">{props.userName} </span>
+        <span className="font-semibold">{commentData.userName} </span>
         <span className="text-gray-500">
-          · {dayjs(props.createdDate * 1000).fromNow()}
+          · {dayjs(commentData.createdDate * 1000).fromNow()}
         </span>
       </div>
       <div className="py-2 bg-blue-100 mb-5 p-2 rounded">
-        <p>{props.text}</p>
+        <p>{commentData.text}</p>
       </div>
       <hr />
     </div>
@@ -105,14 +102,15 @@ const Comment = (props: CommentPropsType) => {
 
 export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   const queryClient = useQueryClient();
-
   const [user, setUser] = useContext(UserContext);
   const router = useRouter();
+
   const {
     data: posts,
     isLoading,
     error,
   } = useQuery("postInfo", () => fetchSinglePost(id));
+
   const {
     data: comments,
     isLoading: commentsLoading,
@@ -169,6 +167,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
       if (!cookies.get("jwt")) {
         router.push("/login");
       }
+      await checkJwtValidation();
 
       data.postId = Number(id);
       data.userName = parseJwt(cookies.get("jwt")).sub;
@@ -177,6 +176,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         jwt: cookies.get("jwt"),
         postId: Number(data.postId),
       };
+      console.log(dto, "comennntoo");
       mutate(dto);
     } catch (e) {
       console.log(e);
@@ -202,13 +202,13 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     <>
       <Header />
 
-      <main className="max-w-[1280px] mx-auto py-16 py-16">
-        <BannerInfo {...subredditData} singlePost={true} />
-        <div className="flex justify-center space-x-6 ">
-          <div className="bg-white rounded-lg">
-            <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2">
+      <main className=" py-16 pt-16">
+        <BannerInfo subredditData={subredditData} singlePost={true} />
+        <div className="flex justify-center space-x-6 max-w-[1280px] mx-auto px-4 md:px-2">
+          <div className="bg-white w-full md:w-[600px] rounded-lg">
+            <div className="flex flex-col  min-h-[200px] space-y-2">
               {posts?.map((post) => (
-                <PostCard key={post.id} {...post} singlePost={true} />
+                <PostCard key={post.id} post={post} singlePost={true} />
               ))}
             </div>
             <div className="px-10 pt-5">
@@ -229,15 +229,14 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
                 </div>
               ) : (
                 comments?.map((comment) => (
-                  <Comment {...comment} key={comment.id} />
+                  <Comment commentData={comment} key={comment.id} />
                 ))
               )}
             </div>
           </div>
 
-          <div className=" space-y-4">
-            <InfoCard {...subredditData} />
-            <InfoCard {...subredditData} />
+          <div className=" space-y-4 hidden md:block">
+            <InfoCard subredditData={subredditData} />
           </div>
         </div>
       </main>

@@ -3,6 +3,8 @@ import { cookies } from "@/api/subredditApi";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
+import logo from "../assets/logo.png";
 
 const Header = () => {
   const [username, setUsername] = useState("");
@@ -15,18 +17,25 @@ const Header = () => {
 
   const logout = () => {
     setUsername("");
-    cookies.remove("jwt");
-    cookies.remove("jwt-refresh");
-    cookies.remove("jwt-expire");
+    cookies.remove("jwt", { path: "/" });
+    cookies.remove("jwt-refresh", { path: "/" });
+    cookies.remove("jwt-expire", { path: "/" });
     toast("Successfully logged out", {
-      duration: 2000,
+      duration: 1000,
     });
   };
 
   return (
-    <header className="flex justify-between px-8 py-5 bg-white fixed w-full z-30">
-      <Link href="/">
-        <img src="" alt="Reddit Icon" />
+    <header className="flex justify-between items-center px-8 py-2 bg-white fixed w-full z-30">
+      <Link className="flex items-center space-x-2" href="/">
+        <Image
+          className="h-12 w-12 rounded-full"
+          src={logo}
+          alt="Reddit Icon"
+        />
+        <span>
+          recl<span className="text-red-700 font-semibold">o</span>ne
+        </span>
       </Link>
       <div className=" text-gray-500 px-2">
         <span className="border-r border-gray-600 pr-2 mr-2 text-blue-800">

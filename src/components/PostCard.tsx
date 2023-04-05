@@ -1,4 +1,4 @@
-import { votePost } from "@/api/subredditApi";
+import { Post, votePost } from "@/api/subredditApi";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,30 +7,20 @@ import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 
 export interface PostParamsType {
-  id: number;
-  postName: string;
-  url: string;
-  description: string;
-  userName: string;
-  subredditName: string;
-  voteCount: number;
-  commentCount: number;
-  duration: string;
-  upVote: boolean;
-  downVote: boolean;
+  post: Post;
   singlePost: boolean;
 }
 
-const PostCard = ({
-  postName,
-  description,
-  singlePost,
-  userName,
-  duration,
-  id,
-  voteCount,
-  commentCount,
-}: PostParamsType) => {
+const PostCard = ({ post, singlePost }: PostParamsType) => {
+  const {
+    postName,
+    description,
+    userName,
+    duration,
+    id,
+    voteCount,
+    commentCount,
+  } = post;
   const { slug } = router.query;
   const queryClient = useQueryClient();
 
@@ -79,7 +69,7 @@ const PostCard = ({
       }
       className={`flex w-full  border border-gray-400 ${
         singlePost
-          ? "rounded-lg rounded-b-none border-none bg-white cursor-default"
+          ? "min-h-[200px] rounded-lg rounded-b-none border-none bg-white cursor-default"
           : "rounded-lg bg-slate-100"
       }`}
     >

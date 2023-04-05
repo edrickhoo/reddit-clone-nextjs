@@ -47,23 +47,22 @@ export default function SubredditHome({ slug }: { slug: string }) {
   return (
     <>
       <Header />
-      <main className="max-w-[1280px] mx-auto py-16">
-        <BannerInfo {...subredditData} singlePost={false} />
-        <div className="flex justify-center space-x-6">
-          <div className="flex flex-col w-[600px] space-y-2">
+      <main className=" pt-16">
+        <BannerInfo subredditData={subredditData} singlePost={false} />
+        <div className="flex justify-center space-x-6 max-w-[1280px] px-4 md:px-2 mx-auto">
+          <div className="flex flex-col w-full md:w-[600px] space-y-2">
             {postsData.length === 0 || !postsData ? (
               <div className="text-white text-lg pt-4">
                 There are currently no posts.
               </div>
             ) : (
               postsData.map((post) => (
-                <PostCard key={post.id} singlePost={false} {...post} />
+                <PostCard key={post.id} singlePost={false} post={post} />
               ))
             )}
           </div>
-          <div className=" space-y-4">
-            <InfoCard {...subredditData} />
-            <InfoCard {...subredditData} />
+          <div className=" space-y-4 hidden md:block">
+            <InfoCard subredditData={subredditData} />
           </div>
         </div>
       </main>
