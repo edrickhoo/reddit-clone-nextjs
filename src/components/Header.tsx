@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import logo from "../assets/logo.png";
 
 const Header = () => {
   const [username, setUsername] = useState("");
@@ -30,7 +29,9 @@ const Header = () => {
       <Link className="flex items-center space-x-2" href="/">
         <Image
           className="h-12 w-12 rounded-full"
-          src={logo}
+          width={48}
+          height={48}
+          src="/logo.png"
           alt="Reddit Icon"
         />
         <span>

@@ -2,8 +2,6 @@ import { Subreddit } from "@/api/subredditApi";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import defaultBg from "/default-bg.jpg";
-import defaultIcon from "/default-icon.png";
 
 interface BannerInfoProps {
   singlePost: Boolean;
@@ -25,7 +23,7 @@ const BannerInfo = ({ subredditData, singlePost }: BannerInfoProps) => {
         <div>
           <Image
             className="h-[200px] object-none md:object-cover"
-            src={error.bg || bgUrl === null ? defaultBg : bgUrl}
+            src={error.bg || bgUrl === null ? "/default-bg.jpg" : bgUrl}
             onError={() => setError({ ...error, bg: true })}
             width={1920}
             height={200}
@@ -37,7 +35,9 @@ const BannerInfo = ({ subredditData, singlePost }: BannerInfoProps) => {
             <div className="flex space-x-4 relative">
               <Image
                 className="rounded-full p-1 -translate-y-3 bg-white mr-1 object-contain"
-                src={error.icon || iconUrl === null ? defaultIcon : iconUrl}
+                src={
+                  error.icon || iconUrl === null ? "/default-icon.png" : iconUrl
+                }
                 width={70}
                 height={70}
                 onError={() => setError({ ...error, icon: true })}
