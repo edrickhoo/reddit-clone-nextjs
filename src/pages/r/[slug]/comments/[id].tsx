@@ -105,14 +105,15 @@ const Comment = (props: CommentPropsType) => {
 
 export default function SinglePost({ slug, id }: { slug: string; id: string }) {
   const queryClient = useQueryClient();
-
   const [user, setUser] = useContext(UserContext);
   const router = useRouter();
+
   const {
     data: posts,
     isLoading,
     error,
   } = useQuery("postInfo", () => fetchSinglePost(id));
+
   const {
     data: comments,
     isLoading: commentsLoading,
@@ -202,11 +203,11 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
     <>
       <Header />
 
-      <main className="max-w-[1280px] mx-auto py-16 pt-16">
+      <main className=" py-16 pt-16">
         <BannerInfo {...subredditData} singlePost={true} />
-        <div className="flex justify-center space-x-6 ">
+        <div className="flex justify-center space-x-6 max-w-[1280px] mx-auto ">
           <div className="bg-white rounded-lg">
-            <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2">
+            <div className="flex flex-col w-[600px]  min-h-[200px] space-y-2 ">
               {posts?.map((post) => (
                 <PostCard key={post.id} {...post} singlePost={true} />
               ))}

@@ -98,6 +98,18 @@ const CreateSubredditModal = ({ closeModal }: CreateSubredditModalProps) => {
                 Description is required
               </p>
             )}
+            <input
+              {...register("bgUrl")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Background URL"
+            />
+            <input
+              {...register("iconUrl")}
+              className="px-5 py-2 border"
+              type="text"
+              placeholder="Icon URL"
+            />
           </div>
           <hr />
           <div className="flex justify-end">

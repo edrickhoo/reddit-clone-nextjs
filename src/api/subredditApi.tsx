@@ -146,6 +146,8 @@ export const votePost = async (voteDto: VoteDto) => {
 export interface SubredditDto {
   name: string;
   description: string;
+  bgUrl: string;
+  iconUrl: string;
 }
 
 export const createSubreddit = async (subredditDto: SubredditDto) => {
