@@ -5,6 +5,7 @@ import Link from "next/link";
 import router from "next/router";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
+import { BiCommentDots } from "react-icons/bi";
 
 export interface PostParamsType {
   post: Post;
@@ -110,8 +111,8 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
           <p>{description}</p>
         </div>
         <div>
-          <button className="flex hover:bg-gray-300 p-1 text-sm">
-            <Image src="" alt="Comment" />
+          <button className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm">
+            <BiCommentDots className="text-gray-600" size={17} />
             <span>{commentCount} Comments</span>
           </button>
         </div>
