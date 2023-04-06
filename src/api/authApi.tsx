@@ -1,8 +1,7 @@
 import axios from "axios";
 import { cookies } from "./subredditApi";
 
-export const BASE_URL =
-  "https://reddit-clone-back-end-production.up.railway.app/api/";
+export const BASE_URL = "http://localhost:8080/api/";
 
 export interface LoginData {
   username: String;

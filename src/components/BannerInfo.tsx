@@ -20,7 +20,7 @@ const BannerInfo = ({ subredditData, singlePost }: BannerInfoProps) => {
         className={`${!singlePost && "cursor-default"} `}
         href={singlePost ? `/r/${name}` : "#"}
       >
-        <div>
+        <div className="flex justify-center">
           <Image
             className="h-[200px] object-none md:object-cover"
             src={error.bg || bgUrl === null ? "/default-bg.jpg" : bgUrl}
