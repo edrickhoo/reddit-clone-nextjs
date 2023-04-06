@@ -5,7 +5,7 @@ import Link from "next/link";
 import router from "next/router";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
-import { BiCommentDots } from "react-icons/bi";
+import { BiCommentDots, BiDownvote, BiUpvote } from "react-icons/bi";
 
 export interface PostParamsType {
   post: Post;
@@ -79,26 +79,30 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
           singlePost ? "rounded-b-none" : "bg-gray-200"
         }`}
       >
-        <div className="max-w-[40px] flex flex-col items-center py-3 px-2 text-xs">
+        <div className="max-w-[40px] flex flex-col items-center justify-center py-3 px-2 text-xs">
           <button
             onClick={(e) => {
               e.stopPropagation();
               e.nativeEvent.preventDefault();
               onVote("UPVOTE");
             }}
+            className="flex items-center justify-center"
           >
-            Up
+            <BiUpvote size={15} />
           </button>
 
-          <div>{voteCount}</div>
+          <div className={`${voteCount >= 0 ? "mr-[1px]" : "mr-1"}`}>
+            {voteCount}
+          </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               e.nativeEvent.preventDefault();
               onVote("DOWNVOTE");
             }}
+            className="flex items-center justify-center"
           >
-            Down
+            <BiDownvote size={15} />
           </button>
         </div>
       </div>
