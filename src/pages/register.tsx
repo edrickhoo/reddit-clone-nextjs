@@ -124,7 +124,7 @@ const Register = () => {
 
         <div>
           <span>
-            Existing User
+            Existing User{" "}
             <Link className="text-blue-500 hover:text-blue-600" href="/login">
               Log In
             </Link>
