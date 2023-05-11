@@ -50,10 +50,6 @@ const Login = () => {
     },
   });
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   const onSubmit = async (loginDto: LoginData) => {
     mutate(loginDto);
   };

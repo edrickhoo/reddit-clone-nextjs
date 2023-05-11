@@ -28,6 +28,7 @@ import BannerInfo from "@/components/BannerInfo";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { Comment } from "../../../../api/subredditApi";
+import Head from "next/head";
 
 dayjs.extend(relativeTime);
 
@@ -176,7 +177,6 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         jwt: cookies.get("jwt"),
         postId: Number(data.postId),
       };
-      console.log(dto, "comennntoo");
       mutate(dto);
     } catch (e) {
       console.log(e);
@@ -200,6 +200,12 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
 
   return (
     <>
+      <Head>
+        <title>{slug}</title>
+        <meta name="description" content={`Subreddit for ${slug}`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/logo.png" />
+      </Head>
       <Header />
 
       <main className=" py-16 pt-16">

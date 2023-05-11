@@ -11,9 +11,9 @@ import { GetStaticProps } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
+import Head from "next/head";
 
 export default function SubredditHome({ slug }: { slug: string }) {
-  console.log(slug, "brainslug");
   const [refresh, setRefresh] = useState(1);
 
   const {
@@ -46,6 +46,12 @@ export default function SubredditHome({ slug }: { slug: string }) {
 
   return (
     <>
+      <Head>
+        <title>{slug}</title>
+        <meta name="description" content={`Subreddit for ${slug}`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/logo.png" />
+      </Head>
       <Header />
       <main className=" pt-16">
         <BannerInfo subredditData={subredditData} singlePost={false} />
