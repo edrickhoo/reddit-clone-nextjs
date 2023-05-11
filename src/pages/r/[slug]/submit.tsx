@@ -160,7 +160,6 @@ export default function CreatePostPage() {
         postDto: data,
         jwt: cookies.get("jwt"),
       };
-      console.log({ postParams });
       mutate(postParams);
     } catch (e) {
       console.log(e);

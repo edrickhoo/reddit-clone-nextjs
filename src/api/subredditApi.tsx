@@ -32,28 +32,23 @@ export const fetchSubredditByName = async (name: string) => {
   const res = await axios.get<Subreddit>(
     BASE_URL + `subreddit?subredditName=${name}`
   );
-  console.log(res.data);
   return res.data;
 };
 
 export const fetchSubreddits = async () => {
   const res = await axios.get<Subreddit[]>(BASE_URL + `subreddit`);
-  console.log(res.data);
   return res.data;
 };
 
 export const fetchSubredditPosts = async (subredditName: string) => {
-  console.log(subredditName, "subredditNameididid");
   const res = await axios.get<Post[]>(
     BASE_URL + `posts?subredditName=${subredditName}`
   );
-  console.log(res.data);
   return res.data.reverse();
 };
 
 export const fetchSinglePost = async (postId: string) => {
   const res = await axios.get<Post>(BASE_URL + `posts/${postId}`);
-  console.log(res.data);
   return [res.data];
 };
 
@@ -69,7 +64,6 @@ export const fetchCommentsByPost = async (postId: string) => {
   const res = await axios.get<Comment[]>(
     BASE_URL + `comments?postId=${postId}`
   );
-  console.log(res.data, "comment");
   res.data.sort((a, b) => {
     return b.createdDate - a.createdDate;
   });
@@ -100,7 +94,6 @@ export const postCommentToPost = async ({
       },
     }
   );
-  console.log(res.data, "commentPost");
   return res;
 };
 
@@ -122,7 +115,6 @@ export const postSubredditPost = async ({ postDto, jwt }: PostParams) => {
       Authorization: `Bearer ${jwt}`,
     },
   });
-  console.log(res, "postPost");
   return res;
 };
 
@@ -134,14 +126,12 @@ export interface VoteDto {
 export const votePost = async (voteDto: VoteDto) => {
   await checkJwtValidation();
   const jwt = cookies.get("jwt");
-  console.log(voteDto, jwt, "pizza");
   const res = await axios.post(BASE_URL + "votes", voteDto, {
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
   });
 
-  console.log(res, "votePost");
   return res;
 };
 
@@ -161,7 +151,6 @@ export const createSubreddit = async (subredditDto: SubredditDto) => {
     },
   });
 
-  console.log(res, "subreddit post");
   return res;
 };
 
@@ -172,10 +161,7 @@ export interface RegisterDto {
 }
 
 export const registerUser = async (registerDto: RegisterDto) => {
-  console.log(registerDto);
   const res = await axios.post(BASE_URL + "auth/signup", registerDto);
-
-  console.log(res, "register res");
 
   return res;
 };

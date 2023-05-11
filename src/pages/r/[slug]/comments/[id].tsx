@@ -177,7 +177,6 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
         jwt: cookies.get("jwt"),
         postId: Number(data.postId),
       };
-      console.log(dto, "comennntoo");
       mutate(dto);
     } catch (e) {
       console.log(e);

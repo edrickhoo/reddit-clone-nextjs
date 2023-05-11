@@ -14,7 +14,6 @@ import BannerInfo from "@/components/BannerInfo";
 import Head from "next/head";
 
 export default function SubredditHome({ slug }: { slug: string }) {
-  console.log(slug, "brainslug");
   const [refresh, setRefresh] = useState(1);
 
   const {

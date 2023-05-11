@@ -38,7 +38,6 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
         : queryClient.invalidateQueries("subredditPosts");
     },
     onError: (e) => {
-      console.log(e);
       if (axios.isAxiosError(e)) {
         toast(e.response?.data?.error, {
           style: {
