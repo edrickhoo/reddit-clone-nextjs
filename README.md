@@ -1,38 +1,96 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Reddit-clone-nextjs
 
-## Getting Started
+## Preview
 
-First, run the development server:
+### Desktop
+#### Home Page
+![Screenshot](./screenshot/reclone-thumbnail.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Subreddit Page
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+![Screenshot-Subreddit](./screenshot/reclone-subreddit-thumbnail.png)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+#### Post Page
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+![Screenshot-Post](./screenshot/reclone-post-thumbnail.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Deployed Version
 
-To learn more about Next.js, take a look at the following resources:
+* [Link]( https://reddit-clone-edric.vercel.app/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+* To install dependencies open terminal cd into the root folder
+ ```
+ npm install
+ ```
+ * Run Application
+ ```
+ npm run dev
+ ```
 
-## Deploy on Vercel
+## Description of project (spec / MVP)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Outline
+This project aim is create a reddit like clone that has the basic functionality aspects of the original reddit. 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Stack
+  NextJS, React Query, React Hook Form, TailwindCSS, Spring Boot (Java), MySQL
+
+### MVP:
+  - Users can register/login and be authenticated -- [x]
+  - Authorization to be done with JWT tokens to verify the user -- [x]
+  - Refresh tokens to improve user experience as JWT tokens have a lifespan of 15 mins -- [x]
+  - Users are able to create subreddits -- [x]
+  - Posts are able to be created in subreddits where users that are authenticated -- [x]
+  - Each post are able to be commented by authenticated users -- [x]
+  - User registration verification to be done via email. (Spring Mail) -- [x]
+
+
+## Approach
+* Initially started with the backend, began by creating entities for posts, tokens, subreddits, users, and votes.
+* User authentication was implemented, incorporating controllers, services, and repositories for each entity.
+* Routes and their corresponding logic were defined to handle various functionalities.
+* Spring mail was used along with gmail smtp to send verification links when registering a user
+* After basic functionality was tested with postman I started to create the frontend after browsing reddit looking at UI and UX aspects for the original app.
+* Created pages routes with Nextjs, fetching and posting data was done with React Query and Axios.
+* Cookies are set with a universal-cookie library to handle cookies.
+* React-hot-toast library used to provide toast notifications to enhance user experience
+
+
+
+## Reflection
+* What went well?
+  - The building of the frontend of the application overall went well as the backend was already built. It was a matter of connecting the frontend to backend APIs.
+* What are you proud of? 
+  - I am proud that everything actually works together, through the process of signing up, sending an verification email, verifying user, logging in and getting a JWT token/Refresh token set into the user's cookies. To then be authenticated and authorised to do specific actions like posting/create subreddits or posts.
+* What was a challenge?
+  - Implementing backend auth via spring boot auth was a little challenging as using the authenticationManager to authentication a user, using a security config to intercept requests and using OAuth2 to verify the jwt token was quite new to me.
+  
+* What you'd do differently?
+  - I would try to build the backend with a different framework such as NestJS to really see how auth works in another framework and further my understanding of Auth and jwt tokens.
+
+
+## Future Goals
+  - Users are able to subscribe to many subreddits -- []
+  - Users are able to comment on existing comments  -- []
+  - Users are able to delete posts/comments/subreddits that they own -- []
+  - Dashboard for subreddit settings to modify background, name etc... -- []
+
+
+## Further reading or links to inspiration
+
+*  [Reddit]( https://www.reddit.com/)
+*  [Spring Boot Jwt Auth]( https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html)
+*  [NextJS docs]( https://nextjs.org/docs)
+
+## Stay in touch
+
+*  [Portfolio]( https://edric-khoo.vercel.app/)
+*  [Linkedin]( https://www.linkedin.com/in/edric-khoo-98881b173/)
+
+
+
+
