@@ -21,6 +21,7 @@ import LoadingSpinner, { LoadingPage } from "@/components/LoadingSpinner";
 import Header from "@/components/Header";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { BsFileImageFill, BsTextParagraph } from "react-icons/bs";
 
 interface CreatePostProps {
   register: UseFormRegister<PostDto>;
@@ -45,10 +46,11 @@ export const CreatePost = ({
       <div className="w-full bg-white rounded">
         <div className="flex ">
           <button className="flex space-x-2 px-6 py-4 border rounded-tl border-b border-r">
-            <Image src="" alt="Post" /> <span>Post</span>
+            <BsTextParagraph />
+            <span>Post</span>
           </button>
           <button className="flex space-x-2 px-6 py-4 border border-l-0">
-            <Image src="" alt="Image" /> <span>Image</span>
+            <BsFileImageFill /> <span>Image</span>
           </button>
         </div>
         <form
