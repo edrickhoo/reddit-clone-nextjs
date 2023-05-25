@@ -22,11 +22,12 @@ const BannerInfo = ({ subredditData, singlePost }: BannerInfoProps) => {
       >
         <div className="flex justify-center">
           <Image
-            className="h-[200px] object-none md:object-cover"
+            className="h-[200px] object-cover w-full"
             src={error.bg || bgUrl === null ? "/default-bg.jpg" : bgUrl}
             onError={() => setError({ ...error, bg: true })}
-            width={1920}
-            height={200}
+            width={0}
+            height={0}
+            sizes="100vw"
             alt="Subreddit Banner"
           />
         </div>

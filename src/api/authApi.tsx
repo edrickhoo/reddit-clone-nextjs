@@ -16,6 +16,13 @@ interface LoginResponse {
   username: string;
 }
 
+export const getUsername = () => {
+  if (parseJwt(cookies.get("jwt"))) {
+    const jwt = parseJwt(cookies.get("jwt"));
+    return jwt.sub;
+  }
+};
+
 export const loginApi = async (loginData: LoginData) => {
   const res = await axios.post<LoginResponse>(
     BASE_URL + "auth/login",
