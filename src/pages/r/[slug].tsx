@@ -13,11 +13,13 @@ import Header from "@/components/Header";
 import BannerInfo from "@/components/BannerInfo";
 import Head from "next/head";
 
+
 interface SubredditHomeProps {
   slug: string;
 }
 
 export default function SubredditHome({ slug }: SubredditHomeProps) {
+
   const [refresh, setRefresh] = useState(1);
 
   const {
