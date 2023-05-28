@@ -69,7 +69,7 @@ export default function SubredditHome({ slug }: SubredditHomeProps) {
               </div>
             ) : (
               postsData.map((post) => (
-                <PostCard key={post.id} singlePost={false} post={post} />
+                <PostCard key={post.id} postType={"subreddit"} post={post} />
               ))
             )}
           </div>

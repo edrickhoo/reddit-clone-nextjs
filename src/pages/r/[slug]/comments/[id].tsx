@@ -214,7 +214,7 @@ export default function SinglePost({ slug, id }: { slug: string; id: string }) {
           <div className="bg-white w-full md:w-[600px] rounded-lg">
             <div className="flex flex-col  min-h-[200px] space-y-2">
               {posts?.map((post) => (
-                <PostCard key={post.id} post={post} singlePost={true} />
+                <PostCard key={post.id} post={post} postType={"single"} />
               ))}
             </div>
             <div className="px-10 pt-5">
