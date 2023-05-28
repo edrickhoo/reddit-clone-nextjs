@@ -166,16 +166,6 @@ const PostCard = ({ post, postType }: PostParamsType) => {
                 <BiDownvote size={15} />
               </button>
             </div>
-            {/* <button
-              onClick={(e) => {
-                e.stopPropagation();
-                e.nativeEvent.preventDefault();
-                onVote("DOWNVOTE");
-              }}
-              className="flex items-center justify-center"
-            >
-              <BiDownvote size={15} />
-            </button> */}
           </div>
         </div>
 
