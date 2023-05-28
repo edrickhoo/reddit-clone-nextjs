@@ -165,3 +165,9 @@ export const registerUser = async (registerDto: RegisterDto) => {
 
   return res;
 };
+
+export const fetchUserPosts = async (username: string) => {
+  const res = await axios.get<Post[]>(BASE_URL + `posts?username=${username}`);
+
+  return res.data;
+};

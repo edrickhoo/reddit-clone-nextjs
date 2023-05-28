@@ -40,7 +40,14 @@ const Header = () => {
       </Link>
       <div className=" text-gray-500 px-2">
         <span className="border-r border-gray-600 pr-2 mr-2 text-blue-800">
-          {username || (
+          {username ? (
+            <Link
+              className="hover:text-blue-400 hover:underline"
+              href={`/u/${username}`}
+            >
+              {username}
+            </Link>
+          ) : (
             <Link
               className=" text-gray-500 hover:text-red-600"
               href="/register"
@@ -49,14 +56,14 @@ const Header = () => {
             </Link>
           )}
         </span>
-        {!username ? (
-          <Link className="hover:text-red-600" href={"/login"}>
-            Login
-          </Link>
-        ) : (
+        {username ? (
           <button className="hover:text-red-600" onClick={logout}>
             Logout
           </button>
+        ) : (
+          <Link className="hover:text-red-600" href={"/login"}>
+            Login
+          </Link>
         )}
       </div>
     </header>

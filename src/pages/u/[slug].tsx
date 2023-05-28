@@ -1,75 +1,65 @@
 import { useQuery } from "react-query";
-import {
-  fetchSubredditByName,
-  fetchSubredditPosts,
-} from "../../api/subredditApi";
-import InfoCard from "@/components/InfoCard";
+import { fetchUserPosts } from "../../api/subredditApi";
 import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
-import { useState } from "react";
 import { GetStaticProps } from "next";
-import Image from "next/image";
 import Header from "@/components/Header";
-import BannerInfo from "@/components/BannerInfo";
 import Head from "next/head";
 
-export default function SubredditHome({ slug }: { slug: string }) {
-  const [refresh, setRefresh] = useState(1);
-
+export default function ProfilePage({ slug }: { slug: string }) {
   const {
-    data: subredditData,
-    isLoading,
-    error,
-  } = useQuery("subredditInfo", () => fetchSubredditByName(slug), {
-    cacheTime: 0,
-  });
-
-  const {
-    data: postsData,
+    data: userPosts,
     isLoading: postsLoading,
     error: postsError,
-  } = useQuery("subredditPosts", () => fetchSubredditPosts(slug), {
+  } = useQuery("userPosts", () => fetchUserPosts(slug), {
     cacheTime: 0,
+    onSuccess(data) {
+      console.log(data);
+    },
   });
 
   if (!slug) {
     return <div>Loading...</div>;
   }
 
-  if (isLoading || postsLoading || !subredditData || !postsData) {
+  if (postsLoading || !userPosts) {
     return <LoadingPage />;
   }
 
-  if (error || postsError) {
+  if (postsError) {
     return <div>error</div>;
   }
 
   return (
     <>
       <Head>
-        <title>{slug}</title>
-        <meta name="description" content={`Subreddit for ${slug}`} />
+        <title className="capitalize">
+          {slug} (u/{slug}) - Reclone
+        </title>
+        <meta name="description" content={`Profile for ${slug}`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" />
       </Head>
       <Header />
       <main className=" pt-16">
-        <BannerInfo subredditData={subredditData} singlePost={false} />
-        <div className="flex justify-center space-x-6 max-w-[1280px] px-4 md:px-2 mx-auto">
+        <div className="mb-5 border bg-white ">
+          <div className="max-w-[900px] mx-auto uppercase flex">
+            <div className="shadow-[inset_0_-2px_0_0] py-2 ">Posts</div>
+          </div>
+        </div>
+        <div className="flex justify-center space-x-6 max-w-[1280px] px-4 md:px-2 mx-auto ">
           <div className="flex flex-col w-full md:w-[600px] space-y-2">
-            {postsData.length === 0 || !postsData ? (
+            {userPosts.length === 0 || !userPosts ? (
               <div className="text-white text-lg pt-4">
                 There are currently no posts.
               </div>
             ) : (
-              postsData.map((post) => (
-                <PostCard key={post.id} postType={"subreddit"} post={post} />
+              userPosts.map((post) => (
+                <PostCard key={post.id} postType={"profile"} post={post} />
               ))
             )}
           </div>
-          <div className=" space-y-4 hidden md:block">
-            <InfoCard subredditData={subredditData} />
-          </div>
+          <div className=" space-y-4 hidden md:block"></div>
         </div>
       </main>
     </>
