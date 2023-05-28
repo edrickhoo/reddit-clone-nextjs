@@ -13,10 +13,10 @@ import DeleteModal from "./DeleteModal";
 
 export interface PostParamsType {
   post: Post;
-  singlePost: boolean;
+  postType: "subreddit" | "single" | "profile";
 }
 
-const PostCard = ({ post, singlePost }: PostParamsType) => {
+const PostCard = ({ post, postType }: PostParamsType) => {
   const {
     postName,
     description,
@@ -25,8 +25,8 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
     id,
     voteCount,
     commentCount,
+    subredditName,
   } = post;
-  const { slug } = router.query;
   const queryClient = useQueryClient();
 
   const [deleteModal, setDeleteModal] = useState(false);
@@ -39,9 +39,16 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
           color: "green",
         },
       });
-      singlePost
-        ? queryClient.invalidateQueries("postInfo")
-        : queryClient.invalidateQueries("subredditPosts");
+      switch (postType) {
+        case "single":
+          queryClient.invalidateQueries("postInfo");
+          break;
+        case "subreddit":
+          queryClient.invalidateQueries("subredditPosts");
+          break;
+        case "profile":
+          queryClient.invalidateQueries("userPosts");
+      }
     },
     onError: (e) => {
       if (axios.isAxiosError(e)) {
@@ -65,9 +72,16 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
             color: "green",
           },
         });
-        singlePost
-          ? queryClient.invalidateQueries("postInfo")
-          : queryClient.invalidateQueries("subredditPosts");
+        switch (postType) {
+          case "single":
+            queryClient.invalidateQueries("postInfo");
+            break;
+          case "subreddit":
+            queryClient.invalidateQueries("subredditPosts");
+            break;
+          case "profile":
+            queryClient.invalidateQueries("userPosts");
+        }
       },
       onError: (e) => {
         if (axios.isAxiosError(e)) {
@@ -106,54 +120,73 @@ const PostCard = ({ post, singlePost }: PostParamsType) => {
     <>
       <Link
         href={
-          singlePost
+          postType === "single"
             ? "#"
-            : `/r/${encodeURIComponent(
-                typeof slug === "string" && !undefined && slug
-              )}/comments/${id}`
+            : `/r/${encodeURIComponent(subredditName)}/comments/${id}`
         }
         className={`flex w-full  border border-gray-400 ${
-          singlePost
+          postType === "single"
             ? "min-h-[200px] rounded-lg rounded-b-none border-none bg-white cursor-default"
             : "rounded-lg bg-slate-100"
         }`}
       >
         <div
           className={` rounded-l-md ${
-            singlePost ? "rounded-b-none" : "bg-gray-200"
+            postType === "single" ? "rounded-b-none" : "bg-gray-200"
           }`}
         >
-          <div className="max-w-[40px] flex flex-col items-center justify-center py-3 px-2 text-xs">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                e.nativeEvent.preventDefault();
-                onVote("UPVOTE");
-              }}
-              className="flex items-center justify-center"
-            >
-              <BiUpvote size={15} />
-            </button>
+          <div
+            className={` rounded-l-md ${
+              postType === "single" ? "rounded-b-none" : "bg-gray-200"
+            }`}
+          >
+            <div className="max-w-[40px] flex flex-col items-center justify-center py-3 px-2 text-xs">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.preventDefault();
+                  onVote("UPVOTE");
+                }}
+                className="flex items-center justify-center"
+              >
+                <BiUpvote size={15} />
+              </button>
 
-            <div className={`${voteCount >= 0 ? "mr-[1px]" : "mr-1"}`}>
-              {voteCount}
+              <div className={`${voteCount >= 0 ? "mr-[1px]" : "mr-1"}`}>
+                {voteCount}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.preventDefault();
+                  onVote("DOWNVOTE");
+                }}
+                className="flex items-center justify-center"
+              >
+                <BiDownvote size={15} />
+              </button>
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                e.nativeEvent.preventDefault();
-                onVote("DOWNVOTE");
-              }}
-              className="flex items-center justify-center"
-            >
-              <BiDownvote size={15} />
-            </button>
           </div>
         </div>
+
         <div className="pt-3 px-2 flex flex-col justify-between">
           <div>
             <p>
-              {userName} · {duration}
+              <Link
+                className="hover:text-blue-400 hover:underline"
+                href={`/u/${userName}`}
+              >
+                {userName}{" "}
+              </Link>
+              · {duration}{" "}
+              {postType === "profile" && (
+                <Link
+                  className="hover:text-blue-400 hover:underline"
+                  href={`/r/${subredditName}`}
+                >
+                  r/{subredditName}
+                </Link>
+              )}
             </p>
             <h5 className="font-semibold text-lg">{postName}</h5>
             <p>{description}</p>
