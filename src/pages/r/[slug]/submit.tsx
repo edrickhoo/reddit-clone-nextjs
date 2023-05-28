@@ -94,10 +94,6 @@ export const CreatePost = ({
 export default function CreatePostPage() {
   const [user, setUser] = useContext(UserContext);
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
   const router = useRouter();
   const { slug } = router.query;
 

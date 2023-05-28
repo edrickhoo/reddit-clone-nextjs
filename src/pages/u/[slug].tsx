@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { fetchUserPosts } from "../../api/subredditApi";
 import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
@@ -14,7 +14,7 @@ export default function ProfilePage({ slug }: { slug: string }) {
   } = useQuery("userPosts", () => fetchUserPosts(slug), {
     cacheTime: 0,
     onSuccess(data) {
-      console.log(data);
+      data.reverse();
     },
   });
 

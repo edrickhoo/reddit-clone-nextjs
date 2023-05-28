@@ -131,9 +131,6 @@ export default function Home() {
   const [user, setUser] = useContext(UserContext);
   const [createModal, setCreateModal] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   const {
     data: subredditData,
