@@ -1,7 +1,8 @@
 import axios from "axios";
 import { cookies } from "./subredditApi";
 
-export const BASE_URL = "http://localhost:8080/api/";
+export const BASE_URL =
+  "https://reddit-clone-back-end-production.up.railway.app/api/";
 
 export interface LoginData {
   username: String;
@@ -14,6 +15,13 @@ interface LoginResponse {
   expiresAt: number;
   username: string;
 }
+
+export const getUsername = () => {
+  if (parseJwt(cookies.get("jwt"))) {
+    const jwt = parseJwt(cookies.get("jwt"));
+    return jwt.sub;
+  }
+};
 
 export const loginApi = async (loginData: LoginData) => {
   const res = await axios.post<LoginResponse>(

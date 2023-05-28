@@ -97,6 +97,21 @@ export const postCommentToPost = async ({
   return res;
 };
 
+export const deletePostById = async ({
+  jwt,
+  postId,
+}: {
+  jwt: string;
+  postId: string;
+}) => {
+  const res = await axios.delete(BASE_URL + `posts/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+  return res;
+};
+
 export interface PostDto {
   subredditName: string;
   url: string;

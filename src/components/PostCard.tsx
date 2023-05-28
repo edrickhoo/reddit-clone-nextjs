@@ -1,4 +1,4 @@
-import { Post, votePost } from "@/api/subredditApi";
+import { Post, cookies, deletePostById, votePost } from "@/api/subredditApi";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +6,10 @@ import router from "next/router";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import { BiCommentDots, BiDownvote, BiUpvote } from "react-icons/bi";
+import { AiFillDelete } from "react-icons/ai";
+import { getUsername } from "@/api/authApi";
+import { useState } from "react";
+import DeleteModal from "./DeleteModal";
 
 export interface PostParamsType {
   post: Post;
@@ -24,6 +28,8 @@ const PostCard = ({ post, postType }: PostParamsType) => {
     subredditName,
   } = post;
   const queryClient = useQueryClient();
+
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const { mutate, isLoading: mutateLoading } = useMutation(votePost, {
     onSuccess: (data) => {
@@ -57,12 +63,50 @@ const PostCard = ({ post, postType }: PostParamsType) => {
     },
   });
 
+  const { mutate: mutateDeletePost, isLoading: deletePostLoading } =
+    useMutation(deletePostById, {
+      onSuccess: (data) => {
+        const message = "Success";
+        toast(message, {
+          style: {
+            color: "green",
+          },
+        });
+        singlePost
+          ? queryClient.invalidateQueries("postInfo")
+          : queryClient.invalidateQueries("subredditPosts");
+      },
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          toast(e.response?.data?.error, {
+            style: {
+              color: "red",
+            },
+          });
+        } else if (e instanceof Error) {
+          toast(e.message);
+        }
+      },
+    });
+
   const onVote = (voteType: string) => {
     const data = {
       postId: id,
       voteType: voteType,
     };
     mutate(data);
+  };
+
+  const toggleDeleteModal = () => {
+    setDeleteModal((prev) => !prev);
+  };
+
+  const deletePost = () => {
+    if (!cookies.get("jwt")) router.push("/login");
+    mutateDeletePost({
+      postId: id.toString(),
+      jwt: cookies.get("jwt"),
+    });
   };
 
   return (
@@ -83,20 +127,36 @@ const PostCard = ({ post, postType }: PostParamsType) => {
           postType === "single" ? "rounded-b-none" : "bg-gray-200"
         }`}
       >
-        <div className="max-w-[40px] flex flex-col items-center justify-center py-3 px-2 text-xs">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              e.nativeEvent.preventDefault();
-              onVote("UPVOTE");
-            }}
-            className="flex items-center justify-center"
-          >
-            <BiUpvote size={15} />
-          </button>
+        <div
+          className={` rounded-l-md ${
+            singlePost ? "rounded-b-none" : "bg-gray-200"
+          }`}
+        >
+          <div className="max-w-[40px] flex flex-col items-center justify-center py-3 px-2 text-xs">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.nativeEvent.preventDefault();
+                onVote("UPVOTE");
+              }}
+              className="flex items-center justify-center"
+            >
+              <BiUpvote size={15} />
+            </button>
 
-          <div className={`${voteCount >= 0 ? "mr-[1px]" : "mr-1"}`}>
-            {voteCount}
+            <div className={`${voteCount >= 0 ? "mr-[1px]" : "mr-1"}`}>
+              {voteCount}
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.nativeEvent.preventDefault();
+                onVote("DOWNVOTE");
+              }}
+              className="flex items-center justify-center"
+            >
+              <BiDownvote size={15} />
+            </button>
           </div>
           <button
             onClick={(e) => {
@@ -130,14 +190,42 @@ const PostCard = ({ post, postType }: PostParamsType) => {
           <h5 className="font-semibold text-lg">{postName}</h5>
           <p>{description}</p>
         </div>
-        <div>
-          <button className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm">
-            <BiCommentDots className="text-gray-600" size={17} />
-            <span>{commentCount} Comments</span>
-          </button>
+        <div className="pt-3 px-2 flex flex-col justify-between">
+          <div>
+            <p>
+              {userName} · {duration}
+            </p>
+            <h5 className="font-semibold text-lg">{postName}</h5>
+            <p>{description}</p>
+          </div>
+          <div className={"flex items-center"}>
+            <button className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm">
+              <BiCommentDots className="text-gray-600" size={17} />
+              <span>{commentCount} Comments</span>
+            </button>
+            {userName === getUsername() && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.preventDefault();
+                  toggleDeleteModal();
+                }}
+                className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm"
+              >
+                <AiFillDelete className="text-gray-600" size={17} />
+                <span>Delete</span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      {deleteModal && (
+        <DeleteModal
+          toggleDeleteModal={toggleDeleteModal}
+          deletePost={deletePost}
+        />
+      )}
+    </>
   );
 };
 
