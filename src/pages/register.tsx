@@ -21,9 +21,9 @@ const Register = () => {
   } = useForm<RegisterDto>();
   const router = useRouter();
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   const { mutate, isLoading, isSuccess } = useMutation(registerUser, {
     onSuccess: (data) => {
