@@ -5,7 +5,12 @@ import Link from "next/link";
 import router from "next/router";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
-import { BiCommentDots, BiDownvote, BiUpvote } from "react-icons/bi";
+import {
+  BiCommentDots,
+  BiDownvote,
+  BiShareAlt,
+  BiUpvote,
+} from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { getUsername } from "@/api/authApi";
 import { useState } from "react";
@@ -116,6 +121,19 @@ const PostCard = ({ post, postType }: PostParamsType) => {
     });
   };
 
+  const handleShareButton = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    e.nativeEvent.preventDefault();
+    const origin =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : "";
+    navigator.clipboard.writeText(
+      `${origin}/r/${encodeURIComponent(subredditName)}/comments/${id}`
+    );
+    toast("Successfully copied to clipboard");
+  };
+
   return (
     <>
       <Link
@@ -195,6 +213,13 @@ const PostCard = ({ post, postType }: PostParamsType) => {
             <button className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm">
               <BiCommentDots className="text-gray-600" size={17} />
               <span>{commentCount} Comments</span>
+            </button>
+            <button
+              onClick={handleShareButton}
+              className="flex items-center space-x-1 hover:bg-gray-300 p-1 text-sm"
+            >
+              <BiShareAlt className="text-gray-600" size={17} />
+              <span>Share</span>
             </button>
             {userName === getUsername() && (
               <button
