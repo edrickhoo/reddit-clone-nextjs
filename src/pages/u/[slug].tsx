@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { fetchUserPosts } from "../../api/subredditApi";
 import PostCard from "@/components/PostCard";
 import { LoadingPage } from "@/components/LoadingSpinner";
