@@ -2,7 +2,7 @@ import { Post, cookies, deletePostById, votePost } from "@/api/subredditApi";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import router from "next/router";
+import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import {
@@ -22,6 +22,7 @@ export interface PostParamsType {
 }
 
 const PostCard = ({ post, postType }: PostParamsType) => {
+  const router = useRouter();
   const {
     postName,
     description,
@@ -114,11 +115,18 @@ const PostCard = ({ post, postType }: PostParamsType) => {
   };
 
   const deletePost = () => {
-    if (!cookies.get("jwt")) router.push("/login");
+    if (!cookies.get("jwt")) {
+      router.push("/login");
+    }
+
     mutateDeletePost({
       postId: id.toString(),
       jwt: cookies.get("jwt"),
     });
+
+    if (postType === "single") {
+      router.push(`/r/${subredditName}`);
+    }
   };
 
   const handleShareButton = (e: React.MouseEvent<HTMLElement>) => {
